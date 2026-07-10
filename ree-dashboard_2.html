@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>REE Intelligence — Global Rare Earth Elements Market Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+<style>
+/* ============ DESIGN TOKENS (dark premium) ============ */
+:root{
+  --plane:#0d0d0d;
+  --surface-1:#1a1a19;
+  --surface-2:#141413;
+  --surface-3:#212120;
+  --surface-hover:#262624;
+  --ink:#ffffff;
+  --ink-2:#c3c2b7;
+  --muted:#898781;
+  --grid:#2c2c2a;
+  --baseline:#383835;
+  --border:rgba(255,255,255,0.09);
+  --border-strong:rgba(255,255,255,0.16);
+  /* categorical (dark, validated) */
+  --s1:#3987e5; --s2:#199e70; --s3:#c98500; --s4:#008300;
+  --s5:#9085e9; --s6:#e66767; --s7:#d55181; --s8:#d95926;
+  --accent:#3987e5;
+  --accent-soft:rgba(57,135,229,0.14);
+  --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --radius:14px; --radius-sm:10px; --radius-lg:20px;
+  --sb-w:248px; --sb-w-collapsed:74px; --hd-h:64px;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 30px rgba(0,0,0,.35);
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--plane);color:var(--ink);font-family:var(--font);
+  -webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5;
+}
+#root{min-height:100vh}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#2f2f2d;border-radius:8px;border:2px solid var(--plane)}
+::-webkit-scrollbar-thumb:hover{background:#3d3d3a}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:inherit}
+a{color:inherit;text-decoration:none}
+
+/* ============ LAYOUT ============ */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sb-w);flex-shrink:0;background:var(--surface-2);
+  border-right:1px solid var(--border);position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;transition:width .22s cubic-bezier(.4,0,.2,1);z-index:40;
+}
+.sidebar.collapsed{width:var(--sb-w-collapsed)}
+.sb-brand{display:flex;align-items:center;gap:11px;padding:0 18px;height:var(--hd-h);
+  border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#3987e5,#9085e9);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(57,135,229,.4)}
+.sb-logo svg{width:19px;height:19px}
+.sb-brand-txt{display:flex;flex-direction:column;overflow:hidden;white-space:nowrap}
+.sb-brand-txt b{font-size:15px;letter-spacing:.3px}
+.sb-brand-txt span{font-size:10.5px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 12px 20px}
+.sb-section{font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);
+  padding:14px 10px 7px;font-weight:600}
+.sidebar.collapsed .sb-section{opacity:0;height:8px;padding:0}
+.nav-item{display:flex;align-items:center;gap:12px;padding:9px 11px;border-radius:10px;
+  color:var(--ink-2);font-size:13.5px;font-weight:500;position:relative;margin-bottom:2px;
+  transition:background .13s,color .13s;white-space:nowrap;width:100%;text-align:left}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+.nav-item:hover{background:var(--surface-hover);color:var(--ink)}
+.nav-item.active{background:var(--accent-soft);color:#8fbcf3}
+.nav-item.active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;
+  background:var(--accent);border-radius:0 3px 3px 0}
+.nav-badge{margin-left:auto;background:var(--surface-3);color:var(--ink-2);font-size:10.5px;
+  padding:1px 7px;border-radius:20px;font-weight:600}
+.sidebar.collapsed .nav-item-txt,.sidebar.collapsed .nav-badge{display:none}
+.sidebar.collapsed .nav-item{justify-content:center;padding:10px}
+.sb-foot{padding:12px;border-top:1px solid var(--border)}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.header{height:var(--hd-h);position:sticky;top:0;z-index:35;background:rgba(13,13,13,.82);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:16px;padding:0 22px}
+.hd-toggle{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:var(--ink-2);flex-shrink:0}
+.hd-toggle:hover{background:var(--surface-3);color:var(--ink)}
+.hd-title{display:flex;flex-direction:column;min-width:0}
+.hd-title b{font-size:15px;letter-spacing:.2px}
+.hd-title span{font-size:11.5px;color:var(--muted)}
+.hd-search{margin-left:auto;position:relative;width:min(360px,34vw)}
+.hd-search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
+.hd-search input{width:100%;height:38px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:10px;padding:0 12px 0 36px;color:var(--ink);font-size:13px;outline:none;transition:border .15s}
+.hd-search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.hd-date{font-size:12px;color:var(--ink-2);white-space:nowrap;display:flex;align-items:center;gap:7px;
+  padding:0 12px;border-left:1px solid var(--border);border-right:1px solid var(--border);height:34px}
+.hd-date svg{width:15px;height:15px;color:var(--muted)}
+.hd-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  color:var(--ink-2);position:relative}
+.hd-icon:hover{background:var(--surface-3);color:var(--ink)}
+.hd-icon .dot{position:absolute;top:8px;right:9px;width:7px;height:7px;background:var(--critical);
+  border-radius:50%;border:2px solid var(--plane)}
+.hd-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#199e70,#3987e5);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;
+  border:1px solid var(--border-strong)}
+
+.content{flex:1;padding:26px 28px 60px;max-width:1560px;width:100%;margin:0 auto}
+.page-head{margin-bottom:22px}
+.page-head h1{font-size:23px;margin:0 0 5px;letter-spacing:-.3px;font-weight:700}
+.page-head p{margin:0;color:var(--muted);font-size:13.5px}
+.badge-live{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;
+  padding:4px 10px;border-radius:20px;letter-spacing:.3px}
+.badge-live.live{background:rgba(12,163,12,.14);color:#4cd137}
+.badge-live.sample{background:rgba(250,178,25,.14);color:var(--warning)}
+.badge-live .pulse{width:7px;height:7px;border-radius:50%;background:currentColor;
+  box-shadow:0 0 0 0 currentColor;animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(76,209,55,.5)}70%{box-shadow:0 0 0 6px rgba(76,209,55,0)}100%{box-shadow:0 0 0 0 rgba(76,209,55,0)}}
+
+/* ============ CARDS / KPIs ============ */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:15px;margin-bottom:26px}
+.kpi{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);
+  padding:17px 18px;position:relative;overflow:hidden;transition:transform .18s,border-color .18s}
+.kpi:hover{transform:translateY(-3px);border-color:var(--border-strong)}
+.kpi::after{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--kc,var(--accent))}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.kpi-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:var(--kcs,var(--accent-soft));color:var(--kc,var(--accent))}
+.kpi-ico svg{width:19px;height:19px}
+.kpi-trend{font-size:11px;font-weight:600;color:var(--good);display:flex;align-items:center;gap:3px}
+.kpi-trend svg{width:12px;height:12px}
+.kpi-val{font-size:29px;font-weight:700;letter-spacing:-.5px;line-height:1}
+.kpi-label{font-size:12px;color:var(--muted);margin-top:6px;font-weight:500}
+
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius)}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:6px 0 15px}
+.section-title h2{font-size:17px;margin:0;font-weight:650;letter-spacing:-.2px}
+.section-title .sub{font-size:12.5px;color:var(--muted)}
+.link-btn{color:var(--accent);font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.link-btn svg{width:14px;height:14px}
+
+/* news cards */
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.news-card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;display:flex;flex-direction:column;transition:transform .18s,border-color .18s,box-shadow .18s;cursor:pointer}
+.news-card:hover{transform:translateY(-4px);border-color:var(--border-strong);box-shadow:var(--shadow)}
+.news-thumb{height:132px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:10px}
+.news-thumb .cat-tag{background:rgba(0,0,0,.55);backdrop-filter:blur(4px);color:#fff;font-size:10.5px;
+  font-weight:600;padding:4px 9px;border-radius:6px;letter-spacing:.3px}
+.news-thumb .ree-chip{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+.news-thumb .bookmark{position:absolute;top:10px;left:10px;width:30px;height:30px;border-radius:8px;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;color:#fff}
+.news-thumb .bookmark svg{width:15px;height:15px}
+.news-thumb .bookmark.on{color:var(--warning)}
+.news-body{padding:14px 15px 15px;display:flex;flex-direction:column;flex:1}
+.news-meta{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap}
+.news-meta .mp{display:inline-flex;align-items:center;gap:4px}
+.news-meta svg{width:12px;height:12px}
+.news-headline{font-size:15px;font-weight:650;line-height:1.32;margin:0 0 8px;letter-spacing:-.1px}
+.news-summary{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin:0 0 13px;flex:1;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.news-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:10.5px;padding:3px 8px;border-radius:6px;background:var(--surface-3);color:var(--ink-2);font-weight:500}
+.chip.co{background:rgba(57,135,229,.13);color:#8fbcf3}
+.read-more{font-size:12px;font-weight:600;color:var(--accent);display:inline-flex;align-items:center;gap:5px}
+.read-more svg{width:14px;height:14px;transition:transform .15s}
+.news-card:hover .read-more svg{transform:translateX(3px)}
+.src-tag{font-size:11px;color:var(--muted);font-weight:500}
+
+/* filter panel */
+.layout-with-filters{display:grid;grid-template-columns:260px 1fr;gap:22px;align-items:start}
+.filter-panel{position:sticky;top:calc(var(--hd-h) + 22px);background:var(--surface-1);
+  border:1px solid var(--border);border-radius:var(--radius);padding:16px;max-height:calc(100vh - var(--hd-h) - 44px);
+  overflow-y:auto}
+.filter-panel h3{font-size:13px;margin:0 0 4px;display:flex;align-items:center;gap:8px;font-weight:650}
+.filter-panel h3 svg{width:15px;height:15px;color:var(--accent)}
+.filter-panel .fp-sub{font-size:11px;color:var(--muted);margin:0 0 14px}
+.fp-group{margin-bottom:13px}
+.fp-group label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);
+  margin-bottom:5px;font-weight:600}
+.fp-select{width:100%;height:34px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
+  color:var(--ink);font-size:12.5px;padding:0 9px;outline:none;cursor:pointer;transition:border .15s}
+.fp-select:focus{border-color:var(--accent)}
+.fp-actions{display:flex;gap:8px;margin-top:16px;position:sticky;bottom:-16px;padding-top:12px;
+  background:var(--surface-1)}
+.btn{height:36px;border-radius:9px;font-size:12.5px;font-weight:600;display:flex;align-items:center;
+  justify-content:center;gap:6px;transition:filter .15s,background .15s;flex:1}
+.btn svg{width:14px;height:14px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-ghost{background:var(--surface-3);color:var(--ink-2)}
+.btn-ghost:hover{background:var(--surface-hover);color:var(--ink)}
+.active-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.af-chip{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:#8fbcf3;
+  font-size:11.5px;font-weight:600;padding:5px 8px 5px 11px;border-radius:8px}
+.af-chip button{display:flex;color:inherit;opacity:.8}
+.af-chip button:hover{opacity:1}
+.af-chip svg{width:13px;height:13px}
+
+/* element / company / tech cards */
+.tile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px}
+.el-card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;position:relative;overflow:hidden}
+.el-card:hover{transform:translateY(-4px);border-color:var(--border-strong);box-shadow:var(--shadow)}
+.el-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.el-sym{width:52px;height:52px;border-radius:12px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-weight:700;position:relative;color:#fff}
+.el-sym b{font-size:20px;line-height:1}
+.el-sym span{font-size:9px;opacity:.85;position:absolute;top:5px;left:7px}
+.el-num{font-size:11px;color:var(--muted);font-weight:600}
+.el-name{font-size:15px;font-weight:650;margin:0 0 3px}
+.el-cat-lbl{font-size:11px;color:var(--accent);font-weight:600;margin-bottom:8px}
+.el-desc{font-size:12px;color:var(--ink-2);line-height:1.45;margin:0 0 11px;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.el-kv{font-size:11px;margin-bottom:6px}
+.el-kv b{color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;font-size:10px;display:block;margin-bottom:2px}
+.el-kv span{color:var(--ink-2)}
+.el-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:11px;
+  border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
+
+.co-card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);padding:17px;
+  transition:transform .18s,border-color .18s,box-shadow .18s;cursor:pointer}
+.co-card:hover{transform:translateY(-4px);border-color:var(--border-strong);box-shadow:var(--shadow)}
+.co-head{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.co-logo{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+.co-name{font-size:14.5px;font-weight:650;margin:0}
+.co-hq{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px;margin-top:2px}
+.co-hq svg{width:12px;height:12px}
+.co-focus{font-size:12px;color:var(--ink-2);line-height:1.45;margin:0 0 12px}
+.co-foot{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border)}
+.co-count{font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
+.co-count b{color:var(--accent);font-size:15px}
+
+/* map */
+.map-wrap{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;position:relative;overflow:hidden}
+.map-svg{width:100%;height:auto;display:block}
+.map-node{cursor:pointer;transition:opacity .15s}
+.map-node:hover{opacity:.85}
+.map-legend{position:absolute;bottom:16px;right:18px;background:rgba(20,20,19,.85);backdrop-filter:blur(6px);
+  border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:11px;color:var(--ink-2)}
+.map-legend b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:7px}
+.map-legend .lg-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.map-legend .dot{border-radius:50%;background:var(--accent)}
+.country-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:20px}
+.country-row{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--surface-1);
+  border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:border-color .15s,background .15s}
+.country-row:hover{border-color:var(--border-strong);background:var(--surface-hover)}
+.country-flag{width:30px;height:22px;border-radius:4px;flex-shrink:0;font-size:15px;display:flex;
+  align-items:center;justify-content:center;background:var(--surface-3)}
+.country-row .cr-name{font-size:13px;font-weight:600}
+.country-row .cr-sub{font-size:11px;color:var(--muted)}
+.country-row .cr-count{margin-left:auto;font-size:13px;font-weight:700;color:var(--accent)}
+
+/* drawer */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:60;
+  animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(620px,94vw);background:var(--surface-2);
+  border-left:1px solid var(--border);z-index:61;overflow-y:auto;animation:slidein .28s cubic-bezier(.4,0,.2,1);
+  box-shadow:-20px 0 60px rgba(0,0,0,.5)}
+@keyframes slidein{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.drawer-hero{height:210px;position:relative;display:flex;align-items:flex-end;padding:18px}
+.drawer-close{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:10px;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:#fff}
+.drawer-close:hover{background:rgba(0,0,0,.75)}
+.drawer-close svg{width:18px;height:18px}
+.drawer-hero .dh-cat{background:rgba(0,0,0,.55);backdrop-filter:blur(4px);color:#fff;font-size:11px;
+  font-weight:600;padding:5px 11px;border-radius:7px}
+.drawer-body{padding:22px 24px 40px}
+.drawer-body h2{font-size:21px;line-height:1.28;margin:0 0 14px;letter-spacing:-.3px}
+.drawer-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.dm-cell{background:var(--surface-1);padding:11px 14px}
+.dm-cell b{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);display:block;margin-bottom:4px}
+.dm-cell span{font-size:13px;color:var(--ink);font-weight:500}
+.drawer-body h4{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:0 0 9px}
+.drawer-summary{font-size:14px;line-height:1.72;color:var(--ink-2);margin:0 0 24px}
+.drawer-summary p{margin:0 0 13px}
+.drawer-ree-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+.ree-tag{font-size:12px;font-weight:600;padding:5px 11px;border-radius:8px;color:#fff}
+.drawer-actions{display:flex;gap:10px}
+.drawer-actions .btn{flex:1;height:44px;font-size:13.5px}
+
+/* charts */
+.chart-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.chart-card{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 8px}
+.chart-card.full{grid-column:1/-1}
+.chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding:0 2px}
+.chart-head h3{font-size:14px;margin:0;font-weight:650}
+.chart-head span{font-size:11.5px;color:var(--muted)}
+.recharts-cartesian-axis-tick-value{fill:var(--muted);font-size:11px}
+.recharts-default-tooltip{background:var(--surface-3)!important;border:1px solid var(--border-strong)!important;
+  border-radius:9px!important;box-shadow:var(--shadow)!important;font-size:12px}
+.recharts-tooltip-label{color:var(--ink)!important;font-weight:600}
+.chart-legend{display:flex;gap:14px;flex-wrap:wrap;padding:8px 4px 14px;font-size:12px;color:var(--ink-2)}
+.chart-legend .lg{display:inline-flex;align-items:center;gap:7px}
+.chart-legend .sw{width:11px;height:11px;border-radius:3px}
+
+/* opportunities */
+.opp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.opp-card{background:linear-gradient(160deg,var(--surface-1),var(--surface-2));border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:transform .18s,border-color .18s}
+.opp-card:hover{transform:translateY(-3px);border-color:var(--border-strong)}
+.opp-tag{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.4px;
+  text-transform:uppercase;padding:5px 10px;border-radius:7px;margin-bottom:13px}
+.opp-tag svg{width:13px;height:13px}
+.opp-card h3{font-size:15px;line-height:1.35;margin:0 0 9px;font-weight:650}
+.opp-card p{font-size:12.5px;color:var(--ink-2);line-height:1.55;margin:0 0 14px}
+.opp-foot{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--muted);
+  padding-top:12px;border-top:1px solid var(--border)}
+.opp-foot .loc{display:flex;align-items:center;gap:5px}
+.opp-foot svg{width:13px;height:13px}
+
+/* research / policy rows */
+.list-rows{display:flex;flex-direction:column;gap:11px}
+.list-row{background:var(--surface-1);border:1px solid var(--border);border-radius:12px;padding:15px 17px;
+  display:flex;gap:15px;align-items:flex-start;cursor:pointer;transition:border-color .15s,transform .15s}
+.list-row:hover{border-color:var(--border-strong);transform:translateX(3px)}
+.lr-ico{width:42px;height:42px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.lr-ico svg{width:20px;height:20px}
+.lr-main{flex:1;min-width:0}
+.lr-main h4{font-size:14px;margin:0 0 5px;font-weight:600;line-height:1.35}
+.lr-main p{font-size:12px;color:var(--ink-2);margin:0 0 8px;line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lr-meta{display:flex;gap:12px;font-size:11px;color:var(--muted);flex-wrap:wrap}
+.lr-meta span{display:inline-flex;align-items:center;gap:4px}
+.lr-meta svg{width:12px;height:12px}
+
+/* settings */
+.settings-card{max-width:680px}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border)}
+.set-row:last-child{border-bottom:none}
+.set-row .sr-txt b{font-size:13.5px;display:block;margin-bottom:3px}
+.set-row .sr-txt span{font-size:12px;color:var(--muted)}
+.toggle{width:44px;height:25px;border-radius:20px;background:var(--surface-3);position:relative;transition:background .18s;flex-shrink:0}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;
+  background:#fff;transition:transform .18s}
+.toggle.on::after{transform:translateX(19px)}
+
+/* empty & skeleton */
+.empty{text-align:center;padding:70px 20px;color:var(--muted)}
+.empty svg{width:52px;height:52px;margin-bottom:16px;opacity:.4}
+.empty h3{font-size:16px;color:var(--ink-2);margin:0 0 6px}
+.empty p{font-size:13px;margin:0 0 18px}
+.skel{background:linear-gradient(90deg,var(--surface-1) 25%,var(--surface-3) 50%,var(--surface-1) 75%);
+  background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{height:290px;border-radius:var(--radius)}
+
+.two-col{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;align-items:start}
+@media(max-width:1080px){.chart-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}
+  .layout-with-filters{grid-template-columns:1fr}.filter-panel{position:relative;top:0;max-height:none}}
+@media(max-width:640px){.hd-date,.hd-title span{display:none}.content{padding:18px 14px 40px}}
+.fade-in{animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const {useState,useMemo,useEffect,useRef} = React;
+const RC = window.Recharts || {};
+const {ResponsiveContainer,BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,
+  XAxis,YAxis,CartesianGrid,Tooltip,RadialBarChart,RadialBar} = RC;
+
+/* ============================================================
+   DATA LAYER  (swap `fetchLiveNews` for a real API later)
+   ============================================================ */
+const PALETTE = ["#3987e5","#199e70","#c98500","#008300","#9085e9","#e66767","#d55181","#d95926"];
+const CONTINENT = {
+  China:"Asia",India:"Asia",Japan:"Asia","South Korea":"Asia",Vietnam:"Asia",Myanmar:"Asia",
+  USA:"North America",Canada:"North America",Greenland:"North America",
+  Australia:"Oceania",Brazil:"South America",
+  Sweden:"Europe",Norway:"Europe",
+  "South Africa":"Africa",Tanzania:"Africa"
+};
+const FLAG = {China:"🇨🇳",USA:"🇺🇸",Australia:"🇦🇺",Canada:"🇨🇦",India:"🇮🇳",Japan:"🇯🇵",
+  "South Korea":"🇰🇷",Vietnam:"🇻🇳",Brazil:"🇧🇷",Myanmar:"🇲🇲",Greenland:"🇬🇱",Sweden:"🇸🇪",
+  Norway:"🇳🇴","South Africa":"🇿🇦",Tanzania:"🇹🇿"};
+
+const ELEMENTS = [
+  {sym:"Sc",num:21,name:"Scandium",desc:"Ultra-light aluminium-scandium alloys and solid oxide fuel cells; extremely scarce and high value.",apps:"Aerospace alloys, SOFCs, sports equipment",countries:"China, Ukraine, Russia, Australia"},
+  {sym:"Y",num:39,name:"Yttrium",desc:"Phosphors, high-temperature superconductors and laser crystals; a key HREE-adjacent metal.",apps:"Phosphors, YAG lasers, superalloys",countries:"China, Australia, USA"},
+  {sym:"La",num:57,name:"Lanthanum",desc:"Fluid catalytic cracking catalysts and NiMH battery electrodes; the lightest lanthanide.",apps:"FCC catalysts, batteries, optics",countries:"China, USA, India"},
+  {sym:"Ce",num:58,name:"Cerium",desc:"The most abundant rare earth; used in glass polishing and automotive catalysts.",apps:"Polishing, catalysts, glass",countries:"China, India, Brazil"},
+  {sym:"Pr",num:59,name:"Praseodymium",desc:"Alloyed with neodymium for high-strength permanent magnets and aircraft engines.",apps:"NdPr magnets, alloys, pigments",countries:"China, Australia, Myanmar"},
+  {sym:"Nd",num:60,name:"Neodymium",desc:"The workhorse of NdFeB permanent magnets powering EV motors and wind turbines.",apps:"Permanent magnets, EV motors, wind",countries:"China, Australia, USA"},
+  {sym:"Pm",num:61,name:"Promethium",desc:"Radioactive and vanishingly rare; used historically in nuclear batteries and luminous paint.",apps:"Nuclear batteries, research",countries:"Synthetic (trace)"},
+  {sym:"Sm",num:62,name:"Samarium",desc:"Samarium-cobalt magnets that retain strength at high temperature for defense uses.",apps:"SmCo magnets, defense, reactors",countries:"China, Australia"},
+  {sym:"Eu",num:63,name:"Europium",desc:"Red and blue phosphors for displays and LED lighting; a critical HREE.",apps:"Phosphors, LEDs, anti-counterfeiting",countries:"China, USA"},
+  {sym:"Gd",num:64,name:"Gadolinium",desc:"MRI contrast agents and neutron shielding in nuclear reactors.",apps:"MRI, nuclear shielding, magnets",countries:"China, Australia"},
+  {sym:"Tb",num:65,name:"Terbium",desc:"Boosts high-temperature performance of NdFeB magnets; one of the scarcest HREEs.",apps:"High-temp magnets, phosphors",countries:"China, Myanmar"},
+  {sym:"Dy",num:66,name:"Dysprosium",desc:"Essential additive to EV and wind magnets for heat resistance; supply-critical HREE.",apps:"EV/wind magnets, lasers",countries:"China, Myanmar, Australia"},
+  {sym:"Ho",num:67,name:"Holmium",desc:"Highest magnetic strength of any element; used in specialty magnets and lasers.",apps:"Magnets, medical lasers",countries:"China"},
+  {sym:"Er",num:68,name:"Erbium",desc:"Optical amplifiers for fibre-optic communications and pink glass colourants.",apps:"Fibre optics, lasers, glass",countries:"China, Australia"},
+  {sym:"Tm",num:69,name:"Thulium",desc:"Portable X-ray sources and surgical lasers; the rarest stable lanthanide.",apps:"X-ray sources, lasers",countries:"China"},
+  {sym:"Yb",num:70,name:"Ytterbium",desc:"Fibre lasers, atomic clocks and stress gauges; an emerging HREE of interest.",apps:"Fibre lasers, atomic clocks",countries:"China"},
+  {sym:"Lu",num:71,name:"Lutetium",desc:"PET scan detectors and petroleum cracking catalysts; the densest, most expensive REE.",apps:"PET imaging, catalysts",countries:"China"}
+];
+const ELEMENT_COLOR = e => PALETTE[e.num % PALETTE.length];
+const REE_SYMS = ELEMENTS.map(e=>e.sym);
+
+const COMPANIES = [
+  {name:"MP Materials",abbr:"MP",hq:"USA",focus:"Owns Mountain Pass, the only integrated rare earth mine and processing site in the Western Hemisphere; expanding into NdFeB magnet production.",products:"NdPr oxide, concentrate, magnets",color:"#3987e5"},
+  {name:"Lynas Rare Earths",abbr:"LY",hq:"Australia",focus:"Largest rare earth producer outside China, operating Mt Weld mine and processing plants in Malaysia and Texas.",products:"NdPr, Dy, Tb oxides",color:"#199e70"},
+  {name:"Iluka Resources",abbr:"IL",hq:"Australia",focus:"Building the Eneabba fully-integrated refinery in Western Australia backed by government financing.",products:"Separated REO, zircon",color:"#c98500"},
+  {name:"Shenghe Resources",abbr:"SH",hq:"China",focus:"Vertically integrated Chinese producer with global mining stakes and trading operations across the REE supply chain.",products:"REO, metals, alloys",color:"#e66767"},
+  {name:"China Northern Rare Earth",abbr:"CN",hq:"China",focus:"World's largest rare earth producer, anchored to the Bayan Obo deposit in Inner Mongolia.",products:"Light REO, magnets, alloys",color:"#d95926"},
+  {name:"Neo Performance Materials",abbr:"NP",hq:"Canada",focus:"Advanced materials maker with magnet, magnetic powder and separation operations in Europe and Asia.",products:"Magnets, rare metals, magnequench",color:"#9085e9"},
+  {name:"Arafura Rare Earths",abbr:"AR",hq:"Australia",focus:"Developing the Nolans NdPr project with combined mine, refinery and separation plant in the Northern Territory.",products:"NdPr oxide",color:"#d55181"},
+  {name:"Energy Fuels",abbr:"EF",hq:"USA",focus:"Uranium and rare earth producer processing monazite into separated oxides at its White Mesa Mill in Utah.",products:"NdPr, mixed REE carbonate",color:"#3987e5"},
+  {name:"Rainbow Rare Earths",abbr:"RB",hq:"South Africa",focus:"Reprocessing phosphogypsum stacks at Phalaborwa to recover rare earths with a low-cost, low-waste route.",products:"Separated REO",color:"#199e70"},
+  {name:"Vital Metals",abbr:"VM",hq:"Canada",focus:"Advancing the Nechalacho project in Canada's Northwest Territories, one of North America's first REE producers.",products:"REE concentrate",color:"#c98500"}
+];
+
+const TECHNOLOGIES = [
+  {name:"Solvent Extraction",desc:"The dominant industrial method for separating individual rare earths using immiscible liquid phases and chelating agents.",stage:"Industrial standard",tags:["Separation","Refining"]},
+  {name:"Ion Exchange",desc:"Resin-based separation delivering ultra-high-purity single rare earths, increasingly automated for heavy REEs.",stage:"Scaling",tags:["Separation","Purification"]},
+  {name:"Hydrometallurgy",desc:"Aqueous leaching and precipitation to dissolve and recover rare earths from ore and recycled feedstock.",stage:"Industrial standard",tags:["Processing","Refining"]},
+  {name:"Pyrometallurgy",desc:"High-temperature smelting and electrowinning used to convert oxides into rare earth metals and alloys.",stage:"Industrial standard",tags:["Metals","Alloys"]},
+  {name:"Magnet Recycling",desc:"Recovering NdFeB magnets from end-of-life motors, drives and electronics via shredding and re-separation.",stage:"Commercialising",tags:["Recycling","Magnets"]},
+  {name:"Electrolysis",desc:"Molten-salt electrolysis producing high-purity rare earth metals directly from oxide feed.",stage:"Industrial standard",tags:["Metals"]},
+  {name:"Plasma Processing",desc:"Plasma-assisted routes for high-purity oxide and metal production with lower reagent intensity.",stage:"Emerging",tags:["Processing","Innovation"]},
+  {name:"Membrane Separation",desc:"Selective membranes and supported liquid membranes offering greener, continuous REE separation.",stage:"Emerging",tags:["Separation","Sustainability"]},
+  {name:"Bioleaching",desc:"Microbial and bio-sorption approaches to extract rare earths from low-grade ores and waste streams.",stage:"Pilot",tags:["Sustainability","Recycling"]},
+  {name:"Direct Reduction",desc:"Calciothermic and solid-state reduction producing rare earth metals with fewer processing steps.",stage:"Scaling",tags:["Metals","Alloys"]}
+];
+
+const COUNTRIES = [
+  {name:"China",lat:35,lon:105,ldx:-14,anc:"end"},{name:"USA",lat:39,lon:-98},{name:"Australia",lat:-25,lon:133},
+  {name:"Canada",lat:56,lon:-106},{name:"India",lat:22,lon:78,ldx:-8,anc:"end"},{name:"Japan",lat:36,lon:138,ldx:12,anc:"start"},
+  {name:"South Korea",lat:36,lon:128,ldy:-16},{name:"Vietnam",lat:16,lon:108,ldy:16},{name:"Brazil",lat:-10,lon:-55},
+  {name:"Myanmar",lat:21,lon:96,ldy:18},{name:"Greenland",lat:72,lon:-42},{name:"Sweden",lat:62,lon:16,ldx:16,anc:"start"},
+  {name:"Norway",lat:62,lon:9,ldx:-16,anc:"end"},{name:"South Africa",lat:-29,lon:24},{name:"Tanzania",lat:-6,lon:35}
+];
+
+const CATEGORIES = ["Mining","Exploration","Ore Processing","Separation","Refining","Rare Earth Oxides",
+  "Rare Earth Metals","Rare Earth Alloys","Permanent Magnets","Magnet Manufacturing","Battery Materials",
+  "Semiconductors","Catalysts","Recycling","Defense","Electric Vehicles","Wind Energy","Electronics",
+  "Healthcare","Nuclear","Government Policy","Supply Chain","Investment","Mergers & Acquisitions",
+  "Research","Technology","Sustainability"];
+
+const INDUSTRIES = ["Electric Vehicles","Wind Energy","Defense","Electronics","Healthcare","Aerospace",
+  "Semiconductors","Consumer Tech","Energy Storage","Industrial"];
+const SOURCES = ["Reuters","Bloomberg","Mining.com","Financial Times","Argus Media","Fastmarkets",
+  "Nikkei Asia","Investing News Network","S&P Global","Company Press Release","Nature","Government Gazette"];
+
+/* ---- News dataset (bundled fallback; realistic, spread across time) ---- */
+const NEWS = [
+  {t:"MP Materials strikes $500m magnet supply deal with major U.S. automaker",d:"2026-06-28",country:"USA",ree:["Nd","Pr","Dy"],company:"MP Materials",cat:"Magnet Manufacturing",tech:"Direct Reduction",ind:"Electric Vehicles",src:"Reuters",opp:"Strategic Partnership",
+   s:"MP Materials signed a multi-year agreement to supply sintered NdFeB magnets from its new Texas facility, anchoring a domestic EV magnet supply chain and locking in offtake through 2035.",
+   b:["MP Materials has agreed a landmark supply arrangement worth an estimated $500 million to deliver domestically produced neodymium-iron-boron magnets to a leading American automaker.","The magnets will be manufactured at MP's Independence facility in Fort Worth, Texas, which is ramping toward commercial output. The deal locks in offtake volumes through 2035 and includes provisions to scale as EV production grows.","Analysts see the agreement as a milestone in building a rare earth magnet supply chain that is independent of Chinese processing, following years of policy support and tariff shifts.","The company also confirmed it is expanding heavy rare earth separation at Mountain Pass to secure dysprosium and terbium for the highest-performance magnet grades."]},
+  {t:"China tightens export controls on heavy rare earth separation technology",d:"2026-06-15",country:"China",ree:["Dy","Tb","Gd"],company:"Shenghe Resources",cat:"Government Policy",tech:"Solvent Extraction",ind:"Defense",src:"Bloomberg",opp:"Export Restriction",
+   s:"Beijing added several rare earth separation and magnet-making technologies to its export control list, intensifying concerns over Western access to heavy rare earth processing know-how.",
+   b:["China's Ministry of Commerce expanded its export control regime to cover additional rare earth extraction and separation technologies, particularly those relevant to heavy rare earths such as dysprosium and terbium.","The measures require licences for the transfer of certain solvent extraction processes and high-performance magnet manufacturing equipment, deepening the strategic contest over critical minerals.","Western producers and governments responded by accelerating funding for domestic separation capacity, while buyers moved to secure longer-term contracts.","Prices for dysprosium oxide rose sharply in the days following the announcement as traders priced in tighter availability."]},
+  {t:"Lynas commissions Texas heavy rare earth processing facility",d:"2026-05-30",country:"USA",ree:["Dy","Tb"],company:"Lynas Rare Earths",cat:"Separation",tech:"Solvent Extraction",ind:"Defense",src:"Financial Times",opp:"Processing Expansion",
+   s:"Lynas began commissioning its U.S. Department of Defense-backed heavy rare earth separation plant in Seadrift, Texas, marking a major step in ex-China heavy REE capacity.",
+   b:["Lynas Rare Earths has started commissioning the heavy rare earth circuit at its Seadrift facility in Texas, supported by funding from the U.S. Department of Defense.","The plant is designed to separate dysprosium and terbium, elements critical to high-temperature permanent magnets used in defense and electric vehicle applications.","It represents one of the first commercial-scale heavy rare earth separation operations outside China and complements Lynas's light rare earth output from Malaysia.","Chief executive commentary emphasised that qualification of output with magnet makers is underway, with first separated products expected within months."]},
+  {t:"Iluka secures additional government loan for Eneabba refinery cost overruns",d:"2026-05-18",country:"Australia",ree:["Nd","Pr","Dy","Tb"],company:"Iluka Resources",cat:"Refining",tech:"Hydrometallurgy",ind:"Wind Energy",src:"Mining.com",opp:"Government Funding",
+   s:"The Australian government extended its financing package for Iluka's Eneabba rare earth refinery after project costs rose, underscoring state commitment to a sovereign supply chain.",
+   b:["Iluka Resources confirmed an expanded loan facility from the Australian government's critical minerals financing arm to cover higher construction costs at the Eneabba refinery in Western Australia.","Eneabba is designed as a fully integrated refinery producing separated rare earth oxides, drawing on a stockpile of monazite and third-party feedstock.","The additional funding reflects Canberra's strategy to establish downstream processing rather than exporting raw concentrate, capturing more of the value chain domestically.","First production remains targeted for 2027, with output aimed at magnet and wind turbine supply chains in allied markets."]},
+  {t:"Arafura's Nolans NdPr project reaches financial close",d:"2026-04-22",country:"Australia",ree:["Nd","Pr"],company:"Arafura Rare Earths",cat:"Investment",tech:"Hydrometallurgy",ind:"Electric Vehicles",src:"Investing News Network",opp:"Mine Opening",
+   s:"Arafura reached financial close on its Nolans neodymium-praseodymium project after securing a syndicate of export credit agencies and offtake partners.",
+   b:["Arafura Rare Earths announced financial close for its flagship Nolans project in Australia's Northern Territory, unlocking construction of a combined mine, refinery and separation plant.","The debt package was assembled from multiple export credit agencies across allied nations, alongside binding offtake agreements with automakers and magnet producers.","Nolans is designed to produce neodymium-praseodymium oxide, a key input for the permanent magnets that drive electric vehicle motors and wind turbines.","The project is expected to be one of the largest new sources of NdPr outside China once fully ramped."]},
+  {t:"Neo Performance opens permanent magnet plant in Estonia",d:"2026-04-08",country:"Sweden",ree:["Nd","Pr","Dy"],company:"Neo Performance Materials",cat:"Magnet Manufacturing",tech:"Direct Reduction",ind:"Electric Vehicles",src:"Reuters",opp:"Magnet Plant",
+   s:"Neo Performance Materials inaugurated Europe's first major sintered NdFeB magnet plant, serving European automakers seeking supply chain resilience.",
+   b:["Neo Performance Materials has opened a sintered neodymium-iron-boron magnet manufacturing facility in Estonia, described as the first at commercial scale in Europe.","The plant will supply traction motor magnets to European automotive and industrial customers, reducing reliance on imported Chinese magnets.","Neo sources separated rare earth materials from its Sillamäe refinery and other allied suppliers, creating a regional value chain.","European Union critical raw materials targets and customer demand for traceable supply underpinned the investment decision."]},
+  {t:"Energy Fuels ramps monazite processing at White Mesa Mill",d:"2026-03-27",country:"USA",ree:["Nd","Pr","La","Ce"],company:"Energy Fuels",cat:"Ore Processing",tech:"Hydrometallurgy",ind:"Electric Vehicles",src:"Mining.com",opp:"Processing Expansion",
+   s:"Energy Fuels increased throughput of monazite sands at its Utah mill, advancing plans to become a significant U.S. producer of separated rare earth oxides.",
+   b:["Energy Fuels reported higher processing rates of monazite feedstock at its White Mesa Mill in Utah, where it recovers rare earths as a by-product of uranium operations.","The company is building solvent extraction circuits to separate neodymium-praseodymium and other oxides, targeting commercial volumes for magnet supply chains.","Monazite is being sourced from heavy mineral sands operations in the U.S. and abroad, giving Energy Fuels a flexible feedstock base.","Management highlighted the dual uranium and rare earth revenue streams as a competitive advantage amid volatile prices."]},
+  {t:"Rainbow Rare Earths advances Phalaborwa phosphogypsum project",d:"2026-03-14",country:"South Africa",ree:["Nd","Pr","Dy","Tb"],company:"Rainbow Rare Earths",cat:"Sustainability",tech:"Hydrometallurgy",ind:"Wind Energy",src:"Argus Media",opp:"Recycling Investment",
+   s:"Rainbow Rare Earths progressed its project to recover rare earths from legacy phosphogypsum stacks, offering a low-waste route to separated oxides.",
+   b:["Rainbow Rare Earths advanced development of its Phalaborwa project in South Africa, which reprocesses phosphogypsum waste stacks to extract rare earths.","The approach avoids mining and tailings dams, positioning the project as one of the lowest-cost and most sustainable sources of separated rare earth oxides.","A continuous ion exchange partnership is being used to produce separated products directly on site.","The company is targeting neodymium, praseodymium, dysprosium and terbium, the elements most in demand for permanent magnets."]},
+  {t:"Vital Metals restarts Nechalacho with new strategic investor",d:"2026-02-26",country:"Canada",ree:["Nd","Pr","La","Ce"],company:"Vital Metals",cat:"Mining",tech:"Hydrometallurgy",ind:"Electric Vehicles",src:"Investing News Network",opp:"Mine Opening",
+   s:"Vital Metals secured a strategic investment to restart mining at Nechalacho, one of North America's earliest rare earth operations.",
+   b:["Vital Metals announced a strategic investment enabling the restart of mining at its Nechalacho project in Canada's Northwest Territories.","Nechalacho is one of the first rare earth mines to operate in North America and produces a rare earth concentrate for downstream processing.","The funding supports a revised mine plan and a partnership to develop domestic separation capacity in Canada.","The project aligns with Canadian and allied efforts to diversify rare earth supply away from Chinese processing."]},
+  {t:"China Northern Rare Earth raises listed prices amid strong magnet demand",d:"2026-02-12",country:"China",ree:["Nd","Pr"],company:"China Northern Rare Earth",cat:"Supply Chain",tech:"Solvent Extraction",ind:"Electric Vehicles",src:"Fastmarkets",opp:"",
+   s:"China Northern Rare Earth lifted its monthly listed prices for neodymium-praseodymium oxide, reflecting robust demand from the electric vehicle and wind sectors.",
+   b:["China Northern Rare Earth, the world's largest producer, increased its listed prices for key light rare earth oxides in its latest monthly update.","The rise was attributed to strong demand from permanent magnet makers serving electric vehicle and wind turbine manufacturers.","As the anchor producer tied to the Bayan Obo deposit, the company's listed prices are a closely watched benchmark for the global market.","Traders noted tightening inventories and firm downstream orders heading into the second half of the year."]},
+  {t:"Japan and Australia sign rare earth supply chain partnership",d:"2026-01-29",country:"Japan",ree:["Nd","Pr","Dy","Tb"],company:"Lynas Rare Earths",cat:"Government Policy",tech:"Solvent Extraction",ind:"Electric Vehicles",src:"Nikkei Asia",opp:"Supply Chain Diversification",
+   s:"Tokyo and Canberra agreed a framework to co-fund rare earth projects and stockpiles, deepening cooperation on critical minerals security.",
+   b:["Japan and Australia signed a bilateral partnership to strengthen rare earth supply chains, including co-financing of projects and coordinated stockpiling.","The agreement builds on Japan's long-standing investment in Lynas and reflects a broader push to reduce dependence on Chinese supply.","Officials outlined support for processing, separation and magnet manufacturing across both countries.","The deal follows a series of allied critical minerals initiatives spanning the Quad and G7 nations."]},
+  {t:"Researchers demonstrate solvent-free rare earth separation using proteins",d:"2026-01-16",country:"USA",ree:["Nd","Dy","Eu"],company:"",cat:"Research",tech:"Bioleaching",ind:"Industrial",src:"Nature",opp:"Technology Breakthrough",
+   s:"A university team unveiled a protein-based method that selectively binds individual rare earths, promising a greener alternative to solvent extraction.",
+   b:["Researchers published findings on a bio-inspired separation method using engineered proteins that selectively bind specific rare earth ions.","The technique could dramatically reduce the reagent use and waste associated with conventional solvent extraction.","Early demonstrations achieved separation of neighbouring lanthanides, historically one of the hardest challenges in rare earth chemistry.","Scale-up and cost remain open questions, but the work attracted interest from recyclers and processors seeking sustainable routes."]},
+  {t:"European Union sets binding rare earth processing targets",d:"2025-12-20",country:"Sweden",ree:["Nd","Pr","Dy","Tb","Sm"],company:"",cat:"Government Policy",tech:"",ind:"Wind Energy",src:"Financial Times",opp:"Government Funding",
+   s:"Brussels adopted targets requiring a share of rare earth processing and recycling to occur within the bloc under its critical raw materials framework.",
+   b:["The European Union formally adopted binding benchmarks for domestic extraction, processing and recycling of strategic raw materials, including rare earths.","The framework aims to ensure a minimum share of annual consumption is processed within the bloc and that no single third country dominates supply.","Funding instruments and streamlined permitting accompany the targets to accelerate strategic projects.","Sweden's large deposits, including at Kiruna, feature prominently in the bloc's ambitions."]},
+  {t:"LKAB confirms large rare earth deposit expansion near Kiruna",d:"2025-12-05",country:"Sweden",ree:["Nd","Pr","La","Ce"],company:"",cat:"Exploration",tech:"",ind:"Wind Energy",src:"Reuters",opp:"Mine Opening",
+   s:"State miner LKAB reported an expanded resource estimate for its Per Geijer rare earth deposit, one of Europe's largest known occurrences.",
+   b:["LKAB, Sweden's state-owned mining company, confirmed an expanded resource for the Per Geijer deposit near Kiruna, among the largest known rare earth resources in Europe.","The deposit contains significant neodymium and praseodymium alongside phosphate, potentially supplying European magnet supply chains.","LKAB is pursuing a permitting pathway and studying integrated processing to produce separated oxides domestically.","The find has become a symbol of European ambitions to reduce reliance on imported rare earths."]},
+  {t:"Toyota unveils rare-earth-reduced motor magnet for next-gen EVs",d:"2025-11-21",country:"Japan",ree:["Nd","La","Ce"],company:"",cat:"Technology",tech:"Direct Reduction",ind:"Electric Vehicles",src:"Nikkei Asia",opp:"Technology Breakthrough",
+   s:"Toyota detailed a magnet design that partially substitutes cheaper lanthanum and cerium for neodymium, cutting reliance on scarce heavy rare earths.",
+   b:["Toyota presented a next-generation traction motor magnet that reduces neodymium content by substituting more abundant lanthanum and cerium.","The design maintains performance for many vehicle applications while easing exposure to supply-constrained heavy rare earths such as dysprosium.","The automaker said the approach could be applied across future electrified models to improve supply resilience.","Materials researchers cautioned that high-performance applications will still require conventional NdFeB grades."]},
+  {t:"Vietnam moves to expand rare earth mining and attract processors",d:"2025-11-07",country:"Vietnam",ree:["Nd","Pr","La","Ce"],company:"",cat:"Mining",tech:"Hydrometallurgy",ind:"Electronics",src:"Reuters",opp:"Supply Chain Diversification",
+   s:"Hanoi outlined plans to raise rare earth output and court foreign processors, positioning Vietnam as an alternative supply hub.",
+   b:["Vietnam announced plans to expand rare earth mining and invite foreign investment into domestic processing and separation.","The country holds substantial rare earth reserves and has sought partnerships with Korean, Japanese and Western firms.","Officials framed the strategy as a way to move up the value chain rather than exporting raw ore.","Analysts noted execution challenges but see Vietnam as a meaningful diversification option over the coming decade."]},
+  {t:"South Korea launches strategic rare earth stockpile expansion",d:"2025-10-24",country:"South Korea",ree:["Nd","Dy","Tb"],company:"",cat:"Government Policy",tech:"",ind:"Electronics",src:"Nikkei Asia",opp:"Supply Chain Diversification",
+   s:"Seoul expanded its critical minerals stockpile to cover several months of rare earth demand, hedging against supply disruptions.",
+   b:["South Korea's government moved to expand its strategic stockpile of rare earths and other critical minerals to buffer against supply shocks.","The plan targets coverage of several months of industrial demand for magnet and battery materials.","Korean electronics and automotive manufacturers are heavily exposed to rare earth magnet supply.","The stockpile complements investments in overseas projects and domestic recycling capacity."]},
+  {t:"Neo Performance commissions rare earth recycling line in Europe",d:"2025-10-10",country:"Norway",ree:["Nd","Pr","Dy"],company:"Neo Performance Materials",cat:"Recycling",tech:"Magnet Recycling",ind:"Electric Vehicles",src:"Argus Media",opp:"Recycling Investment",
+   s:"Neo Performance started a magnet recycling operation to recover rare earths from end-of-life motors and manufacturing scrap.",
+   b:["Neo Performance Materials commissioned a rare earth magnet recycling line in Europe to recover neodymium, praseodymium and dysprosium.","Feedstock includes production scrap and end-of-life magnets from motors, drives and electronics.","Recycled rare earths feed directly into Neo's magnet and alloy manufacturing operations, closing the loop regionally.","The project supports European targets for a share of rare earth supply to come from recycling."]},
+  {t:"USA Rare Earth opens Oklahoma magnet factory",d:"2025-09-26",country:"USA",ree:["Nd","Pr","Sm"],company:"",cat:"Magnet Manufacturing",tech:"Direct Reduction",ind:"Defense",src:"Bloomberg",opp:"Magnet Plant",
+   s:"A new sintered magnet plant in Oklahoma began production, adding domestic capacity for defense and clean energy customers.",
+   b:["A rare earth magnet manufacturer opened a sintered NdFeB plant in Stillwater, Oklahoma, aimed at defense and clean energy markets.","The facility is part of a broader push to rebuild a domestic magnet manufacturing base in the United States.","The company is developing its own rare earth deposit to eventually supply feedstock, pursuing full vertical integration.","Government incentives and defense procurement commitments underpin the ramp-up."]},
+  {t:"Dysprosium prices spike as heavy rare earth supply tightens",d:"2025-09-12",country:"China",ree:["Dy","Tb"],company:"",cat:"Supply Chain",tech:"",ind:"Electric Vehicles",src:"Fastmarkets",opp:"",
+   s:"Heavy rare earth prices climbed sharply amid tighter Chinese export flows and firm magnet demand, pressuring downstream buyers.",
+   b:["Prices for dysprosium and terbium rose sharply as heavy rare earth availability tightened and export flows from China slowed.","Magnet makers, already navigating strong EV and wind demand, faced higher input costs for the highest-performance grades.","The move renewed interest in heavy rare earth projects and separation capacity outside China.","Buyers increased efforts to qualify recycled and alternative sources to manage exposure."]},
+  {t:"Myanmar mining disruptions ripple through heavy rare earth market",d:"2025-08-29",country:"Myanmar",ree:["Dy","Tb","Gd"],company:"",cat:"Supply Chain",tech:"",ind:"Electric Vehicles",src:"Reuters",opp:"",
+   s:"Instability in Myanmar's rare earth mining regions disrupted feedstock flows into Chinese separation plants, tightening heavy rare earth supply.",
+   b:["Disruptions to mining in Myanmar, a major source of heavy rare earth feedstock for Chinese processors, tightened global supply.","Much of the world's dysprosium and terbium is mined in Myanmar and separated across the border in China.","The disruption highlighted the concentration and fragility of heavy rare earth supply chains.","Prices firmed and downstream buyers accelerated diversification efforts."]},
+  {t:"Brazil's Serra Verde ramps ionic clay rare earth production",d:"2025-08-15",country:"Brazil",ree:["Nd","Pr","Dy","Tb"],company:"",cat:"Mining",tech:"Hydrometallurgy",ind:"Wind Energy",src:"Mining.com",opp:"Mine Opening",
+   s:"Serra Verde increased output from its ionic clay deposit, positioning Brazil as a new source of magnet rare earths outside Asia.",
+   b:["Serra Verde ramped production at its ionic adsorption clay rare earth operation in Brazil, one of the few such deposits outside Asia.","Ionic clays are prized for containing heavy rare earths such as dysprosium and terbium in an easily leachable form.","The operation supplies mixed rare earth carbonate to separation partners, feeding magnet supply chains.","Brazil holds some of the world's largest rare earth reserves and is attracting growing investment."]},
+  {t:"Tanzania's Ngualla project advances toward construction",d:"2025-07-31",country:"Tanzania",ree:["Nd","Pr"],company:"",cat:"Exploration",tech:"Hydrometallurgy",ind:"Wind Energy",src:"Mining.com",opp:"Mine Opening",
+   s:"The Ngualla rare earth project in Tanzania progressed permitting and financing, targeting neodymium-praseodymium output for global magnet demand.",
+   b:["The Ngualla rare earth project in Tanzania advanced toward a construction decision after progress on permitting and financing.","Ngualla is regarded as one of the highest-grade undeveloped rare earth deposits globally, rich in neodymium and praseodymium.","The project pairs a mine with a downstream refinery planned in the United Kingdom to produce separated oxides.","It forms part of a growing pipeline of African rare earth developments."]},
+  {t:"Greenland reopens debate on rare earth mining amid strategic interest",d:"2025-07-18",country:"Greenland",ree:["Nd","Pr","Dy","Y"],company:"",cat:"Government Policy",tech:"",ind:"Defense",src:"Financial Times",opp:"Supply Chain Diversification",
+   s:"Greenland's rich rare earth deposits drew renewed geopolitical attention as allied nations sought secure sources of critical minerals.",
+   b:["Greenland's substantial rare earth deposits returned to the spotlight amid heightened strategic interest from allied governments.","Projects such as Kvanefjeld and Tanbreez host large resources of light and heavy rare earths, though development faces environmental and regulatory hurdles.","Interest reflects a broader race to secure critical minerals outside Chinese control.","Local politics and community consent remain central to any development pathway."]},
+  {t:"India unveils national critical minerals mission with rare earth focus",d:"2025-06-27",country:"India",ree:["Nd","Pr","La","Ce"],company:"",cat:"Government Policy",tech:"Hydrometallurgy",ind:"Electronics",src:"Reuters",opp:"Government Funding",
+   s:"New Delhi launched a mission to boost domestic rare earth mining, processing and magnet manufacturing with dedicated funding.",
+   b:["India launched a national critical minerals mission with significant funding directed at rare earth exploration, processing and magnet manufacturing.","State-owned IREL holds monazite resources, and the mission aims to expand separation and downstream capacity.","India seeks to reduce import dependence and build magnet production for its growing electronics and EV sectors.","The programme includes incentives for private investment and international partnerships."]},
+  {t:"Sumitomo and partners invest in North American magnet supply chain",d:"2025-06-13",country:"USA",ree:["Nd","Pr","Dy"],company:"MP Materials",cat:"Investment",tech:"Direct Reduction",ind:"Electric Vehicles",src:"Nikkei Asia",opp:"Strategic Partnership",
+   s:"A Japanese trading house joined investors backing North American rare earth magnet production to diversify supply for automakers.",
+   b:["A Japanese trading house and partners announced investment in North American rare earth magnet supply, supporting domestic production.","The move reflects automakers' drive to secure magnet supply outside China through allied partnerships.","Investment spans feedstock, separation and magnet manufacturing to build an integrated value chain.","The deal adds to a wave of capital flowing into ex-China rare earth projects."]},
+  {t:"Lynas reports record NdPr output as Kalgoorlie plant ramps",d:"2025-05-30",country:"Australia",ree:["Nd","Pr"],company:"Lynas Rare Earths",cat:"Refining",tech:"Solvent Extraction",ind:"Electric Vehicles",src:"Company Press Release",opp:"Processing Expansion",
+   s:"Lynas achieved record neodymium-praseodymium production as its new Kalgoorlie processing facility increased throughput.",
+   b:["Lynas Rare Earths reported record quarterly neodymium-praseodymium production as its Kalgoorlie cracking and leaching plant ramped up.","The Kalgoorlie facility processes concentrate from the Mt Weld mine before further separation in Malaysia.","Higher output positions Lynas to meet growing demand from magnet makers and to supply its new U.S. operations.","The company reaffirmed expansion targets across its Australian and international footprint."]},
+  {t:"Scientists boost magnet recycling yields with hydrogen decrepitation",d:"2025-05-16",country:"Canada",ree:["Nd","Dy","Pr"],company:"",cat:"Research",tech:"Magnet Recycling",ind:"Electric Vehicles",src:"Nature",opp:"Technology Breakthrough",
+   s:"A research group improved hydrogen-based recycling of NdFeB magnets, raising recovery rates and lowering energy use for reclaimed rare earths.",
+   b:["Researchers reported improvements to hydrogen decrepitation, a process that breaks down end-of-life NdFeB magnets for recycling.","The refined process raised recovery yields and reduced energy consumption compared with conventional routes.","Recycled magnet powder can be reprocessed into new magnets, supporting a circular rare earth economy.","Industry partners expressed interest in scaling the approach as magnet volumes from retired EVs grow."]},
+  {t:"Shenghe Resources expands overseas rare earth mining stakes",d:"2025-04-24",country:"China",ree:["Nd","Pr","La","Ce"],company:"Shenghe Resources",cat:"Mergers & Acquisitions",tech:"",ind:"Industrial",src:"Bloomberg",opp:"Strategic Partnership",
+   s:"Shenghe increased its portfolio of international rare earth mining interests, reinforcing its role across the global supply chain.",
+   b:["Shenghe Resources expanded its portfolio of overseas rare earth mining stakes through new investments and offtake arrangements.","The Chinese producer maintains interests spanning mining, processing and trading across multiple continents.","The moves reinforce China's central role in the global rare earth value chain even as Western capacity grows.","Analysts noted the strategic importance of feedstock control amid tightening supply."]},
+  {t:"Panasonic secures long-term rare earth magnet supply for EV batteries plants",d:"2025-04-11",country:"Japan",ree:["Nd","Pr","Dy"],company:"",cat:"Supply Chain",tech:"",ind:"Electric Vehicles",src:"Nikkei Asia",opp:"Strategic Partnership",
+   s:"Panasonic signed multi-year magnet supply agreements to support motor and component manufacturing for the EV sector.",
+   b:["Panasonic secured long-term rare earth magnet supply agreements to underpin its electric vehicle component manufacturing.","The deals aim to insulate the company from magnet price volatility and supply disruptions.","Japanese manufacturers have led efforts to diversify magnet sourcing since earlier supply shocks.","The agreements include provisions for traceable and lower-carbon material."]},
+  {t:"MP Materials begins commercial magnet production in Texas",d:"2025-03-28",country:"USA",ree:["Nd","Pr"],company:"MP Materials",cat:"Magnet Manufacturing",tech:"Direct Reduction",ind:"Electric Vehicles",src:"Reuters",opp:"Magnet Plant",
+   s:"MP Materials commenced commercial production of finished rare earth magnets at its Fort Worth facility, a milestone for U.S. supply.",
+   b:["MP Materials announced the start of commercial rare earth magnet production at its Independence facility in Fort Worth, Texas.","The plant produces sintered NdFeB magnets from feedstock refined at the company's Mountain Pass operation in California.","It marks a significant step toward a fully domestic U.S. rare earth-to-magnet supply chain.","Initial output is directed toward automotive customers with capacity set to expand."]},
+  {t:"Australia commits new funding to critical minerals strategic reserve",d:"2025-03-14",country:"Australia",ree:["Nd","Pr","Dy","Tb"],company:"",cat:"Government Policy",tech:"",ind:"Defense",src:"Financial Times",opp:"Government Funding",
+   s:"Canberra established a strategic reserve mechanism for critical minerals, including rare earths, to strengthen supply security for allies.",
+   b:["Australia announced a strategic reserve initiative for critical minerals, encompassing rare earths, to bolster supply security.","The mechanism can stockpile or hold offtake rights over key materials to support domestic industry and allied partners.","It complements Australia's substantial investments in domestic processing and separation.","Officials positioned the country as a reliable supplier within allied critical minerals frameworks."]},
+  {t:"Solvay expands rare earth separation at La Rochelle for magnets",d:"2025-02-27",country:"Norway",ree:["Nd","Pr","Dy","Tb"],company:"",cat:"Separation",tech:"Solvent Extraction",ind:"Wind Energy",src:"Argus Media",opp:"Processing Expansion",
+   s:"Chemical major Solvay expanded rare earth separation capacity in Europe to supply magnet-grade oxides to regional customers.",
+   b:["Solvay expanded rare earth separation capacity at its European operations to produce magnet-grade neodymium, praseodymium, dysprosium and terbium oxides.","The expansion supports European automakers and wind turbine makers seeking regional supply.","Solvay has decades of rare earth separation expertise and is scaling to meet clean energy demand.","The investment aligns with EU critical raw materials objectives."]},
+  {t:"Ionic Rare Earths advances magnet recycling demonstration plant",d:"2025-02-13",country:"South Africa",ree:["Nd","Pr","Dy"],company:"",cat:"Recycling",tech:"Magnet Recycling",ind:"Electric Vehicles",src:"Mining.com",opp:"Recycling Investment",
+   s:"A magnet recycling demonstration plant advanced toward commercial scale, recovering separated rare earth oxides from scrap.",
+   b:["A rare earth recycling company advanced its demonstration plant that recovers separated oxides from end-of-life magnets and swarf.","The process produces magnet-grade neodymium, praseodymium and dysprosium for reuse in new magnets.","Recycling is emerging as a strategic supplement to primary mining for magnet rare earths.","The project attracted interest from automakers seeking circular supply chains."]},
+  {t:"Semiconductor makers eye rare earth compounds for advanced chips",d:"2025-01-30",country:"South Korea",ree:["La","Ce","Y","Er"],company:"",cat:"Semiconductors",tech:"",ind:"Semiconductors",src:"Nikkei Asia",opp:"Technology Breakthrough",
+   s:"Chipmakers explored rare earth oxides as high-k dielectrics and doping materials for next-generation semiconductor devices.",
+   b:["Semiconductor manufacturers are increasingly evaluating rare earth compounds such as lanthanum and cerium oxides for advanced chip fabrication.","Rare earth oxides serve as high-permittivity dielectrics and in specialty doping and polishing applications.","Growing chip demand adds a new dimension to rare earth consumption beyond magnets.","Supply security for these specialty materials is drawing attention from chipmaking regions."]},
+  {t:"Wind turbine maker signs decade-long rare earth magnet agreement",d:"2025-01-17",country:"Sweden",ree:["Nd","Pr","Dy"],company:"",cat:"Wind Energy",tech:"",ind:"Wind Energy",src:"Bloomberg",opp:"Strategic Partnership",
+   s:"A major wind turbine manufacturer locked in a decade-long rare earth magnet supply deal to support offshore turbine production.",
+   b:["A leading wind turbine manufacturer signed a ten-year rare earth magnet supply agreement to secure materials for direct-drive turbines.","Offshore wind turbines rely heavily on large NdFeB magnets, making supply security critical for the energy transition.","The deal spans magnet-grade neodymium, praseodymium and dysprosium.","It reflects growing efforts to secure traceable, resilient supply for clean energy hardware."]},
+  {t:"U.S. Department of Defense awards heavy rare earth processing grant",d:"2024-12-19",country:"USA",ree:["Dy","Tb","Sm"],company:"Lynas Rare Earths",cat:"Government Policy",tech:"Solvent Extraction",ind:"Defense",src:"Bloomberg",opp:"Government Funding",
+   s:"The Pentagon awarded funding to accelerate domestic heavy rare earth separation critical to defense magnet supply chains.",
+   b:["The U.S. Department of Defense awarded funding to support domestic heavy rare earth separation capacity for defense applications.","Heavy rare earths such as dysprosium, terbium and samarium are essential to high-performance magnets used in defense systems.","The award is part of a broader programme to reduce reliance on foreign processing.","Recipients include established producers building U.S. separation facilities."]},
+  {t:"Gadolinium demand rises with MRI and nuclear applications",d:"2024-12-06",country:"India",ree:["Gd"],company:"",cat:"Healthcare",tech:"",ind:"Healthcare",src:"Investing News Network",opp:"",
+   s:"Growing medical imaging and nuclear demand lifted interest in gadolinium supply and processing capacity.",
+   b:["Rising demand for gadolinium in MRI contrast agents and nuclear shielding drew attention to supply and processing.","Gadolinium is a heavy rare earth with specialised medical and nuclear applications beyond magnets.","Healthcare growth in emerging markets is expanding demand for imaging materials.","Producers are evaluating capacity to serve these specialised end-uses."]},
+  {t:"Canada and EU deepen rare earth processing cooperation",d:"2024-11-22",country:"Canada",ree:["Nd","Pr","Dy"],company:"Neo Performance Materials",cat:"Government Policy",tech:"Hydrometallurgy",ind:"Electric Vehicles",src:"Reuters",opp:"Supply Chain Diversification",
+   s:"Ottawa and Brussels agreed to cooperate on rare earth processing and magnet supply chains under a critical minerals partnership.",
+   b:["Canada and the European Union deepened cooperation on rare earth processing and magnet supply under an expanded critical minerals partnership.","The agreement supports joint projects, standards and investment across the value chain.","Canadian deposits and processing know-how complement European manufacturing demand.","The partnership is part of a web of allied critical minerals arrangements."]},
+  {t:"Startup pilots plasma process for high-purity rare earth metals",d:"2024-11-08",country:"USA",ree:["Nd","Dy","Sm"],company:"",cat:"Technology",tech:"Plasma Processing",ind:"Industrial",src:"Nature",opp:"Technology Breakthrough",
+   s:"A startup demonstrated a plasma-based route to produce high-purity rare earth metals with reduced reagent use.",
+   b:["A technology startup piloted a plasma-assisted process to convert rare earth oxides into high-purity metals.","The approach aims to reduce the reagent intensity and emissions of conventional metal-making routes.","High-purity metals are essential inputs for advanced magnets and specialty alloys.","The pilot attracted interest from magnet makers seeking cleaner domestic supply."]},
+  {t:"Iluka signs offtake with European automaker for separated oxides",d:"2024-10-25",country:"Australia",ree:["Nd","Pr","Dy","Tb"],company:"Iluka Resources",cat:"Mergers & Acquisitions",tech:"Hydrometallurgy",ind:"Electric Vehicles",src:"Company Press Release",opp:"Strategic Partnership",
+   s:"Iluka agreed an offtake deal supplying separated rare earth oxides from Eneabba to a European automaker's magnet supply chain.",
+   b:["Iluka Resources signed an offtake agreement to supply separated rare earth oxides from its Eneabba refinery to a European automaker.","The deal underpins demand for the refinery's magnet-grade output ahead of production.","It reflects automakers' strategy of securing feedstock deep in the supply chain.","Iluka is building integrated capacity to capture more downstream value."]},
+  {t:"China consolidates rare earth industry under state groups",d:"2024-10-11",country:"China",ree:["Nd","Pr","Dy","Tb"],company:"China Northern Rare Earth",cat:"Government Policy",tech:"",ind:"Industrial",src:"Bloomberg",opp:"",
+   s:"Beijing further consolidated its rare earth sector under a small number of state-controlled groups to tighten output and pricing control.",
+   b:["China advanced consolidation of its rare earth industry under a handful of large state-controlled groups.","The restructuring strengthens Beijing's control over production quotas, pricing and export policy.","China remains the dominant force across mining, separation and magnet manufacturing.","The moves reinforce the strategic importance of building alternative supply elsewhere."]},
+  {t:"Battery researchers cut rare earth use in hybrid vehicle motors",d:"2024-09-27",country:"South Korea",ree:["Nd","La"],company:"",cat:"Battery Materials",tech:"",ind:"Electric Vehicles",src:"Nature",opp:"Technology Breakthrough",
+   s:"Engineers demonstrated motor and drivetrain designs that reduce rare earth magnet content in hybrid vehicles.",
+   b:["Researchers demonstrated hybrid vehicle motor designs that reduce reliance on rare earth magnets through alternative topologies.","Reducing rare earth content can lower cost and supply exposure for mass-market vehicles.","High-performance applications still favour NdFeB magnets, but incremental reductions add up at scale.","Automakers are pursuing a mix of substitution, recycling and diversified sourcing."]},
+  {t:"Rare earth catalysts gain ground in clean hydrogen production",d:"2024-09-13",country:"Norway",ree:["Ce","La"],company:"",cat:"Catalysts",tech:"",ind:"Energy Storage",src:"Argus Media",opp:"Technology Breakthrough",
+   s:"Cerium and lanthanum catalysts showed promise in improving efficiency of clean hydrogen and fuel processing.",
+   b:["Rare earth catalysts based on cerium and lanthanum are gaining attention in clean hydrogen and fuel processing applications.","Catalysis is a long-standing rare earth end-use, spanning refining and emissions control.","New clean energy applications could expand demand for light rare earths.","Researchers are optimising formulations to improve efficiency and durability."]},
+  {t:"Norway maps offshore rare earth and seabed mineral potential",d:"2024-08-30",country:"Norway",ree:["Nd","Y","La","Ce"],company:"",cat:"Exploration",tech:"",ind:"Industrial",src:"Reuters",opp:"Mine Opening",
+   s:"Norway assessed offshore mineral resources, including rare earths, as part of a controversial seabed mining evaluation.",
+   b:["Norway advanced assessment of offshore mineral resources, including rare earths, on its extended continental shelf.","Seabed deposits could hold significant quantities of critical minerals, though extraction faces environmental scrutiny.","The evaluation is part of Europe's search for domestic critical mineral sources.","Any development would require careful environmental safeguards and regulatory approval."]},
+  {t:"Samarium-cobalt magnet demand climbs for aerospace and defense",d:"2024-08-16",country:"USA",ree:["Sm"],company:"",cat:"Defense",tech:"Pyrometallurgy",ind:"Aerospace",src:"Bloomberg",opp:"",
+   s:"Demand for high-temperature samarium-cobalt magnets rose with aerospace and defense programmes requiring heat-resistant performance.",
+   b:["Demand for samarium-cobalt magnets increased with aerospace and defense applications that require performance at high temperatures.","SmCo magnets retain strength in extreme conditions where NdFeB grades degrade.","Defense supply chains are prioritising domestic sources of samarium and cobalt.","The trend supports investment in specialty magnet manufacturing."]},
+  {t:"Erbium-doped fibre demand grows with data centre buildout",d:"2024-07-26",country:"Japan",ree:["Er","Yb"],company:"",cat:"Electronics",tech:"",ind:"Electronics",src:"Nikkei Asia",opp:"",
+   s:"Expansion of data centres and fibre-optic networks lifted demand for erbium and ytterbium used in optical amplifiers.",
+   b:["Growth in data centres and fibre-optic networks increased demand for erbium and ytterbium used in optical amplifiers and fibre lasers.","These heavy rare earths serve high-value electronics and telecommunications applications.","AI-driven data centre expansion is a new demand driver for specialty rare earths.","Suppliers are assessing capacity to meet steady growth in optical applications."]}
+];
+
+/* Attempt live retrieval; gracefully fall back to bundled dataset. */
+async function fetchLiveNews(){
+  // Public RSS/JSON endpoints are blocked by CORS inside sandboxed artifacts.
+  // This is the single seam to swap for a real API later — return the same shape.
+  throw new Error("live-unavailable");
+}
+function normalize(list){
+  return list.map((n,i)=>({
+    id:"a"+i,
+    title:n.t,
+    date:n.d,
+    country:n.country,
+    continent:CONTINENT[n.country]||"—",
+    ree:n.ree||[],
+    company:n.company||"",
+    category:n.cat,
+    technology:n.tech||"",
+    industry:n.ind||"",
+    source:n.src,
+    summary:n.s,
+    body:n.b||[n.s],
+    opportunity:n.opp||"",
+    url:"https://www.google.com/search?q="+encodeURIComponent(n.t),
+    color:PALETTE[i%PALETTE.length]
+  })).sort((a,b)=>b.date.localeCompare(a.date));
+}
+
+/* ============================================================
+   ICONS
+   ============================================================ */
+function Icon({n,s}){
+  const p={width:s||18,height:s||18,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",
+    strokeWidth:2,strokeLinecap:"round",strokeLinejoin:"round"};
+  const P={
+    dashboard:<><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></>,
+    news:<><path d="M4 4h13a1 1 0 0 1 1 1v13a2 2 0 0 0 2-2V7"/><path d="M18 18a2 2 0 0 1-2 2H5a2 2 0 0 1-1-3.7V5a1 1 0 0 1 1-1"/><path d="M7 8h7M7 12h7M7 16h4"/></>,
+    atom:<><circle cx="12" cy="12" r="1.6"/><path d="M20.2 20.2c1.6-1.6-.9-6.4-5.6-11.1C9.9 4.4 5.1 1.9 3.5 3.5c-1.6 1.6.9 6.4 5.6 11.1 4.7 4.7 9.5 7.2 11.1 5.6z"/><path d="M3.8 20.2c-1.6-1.6.9-6.4 5.6-11.1C14.1 4.4 18.9 1.9 20.5 3.5c1.6 1.6-.9 6.4-5.6 11.1-4.7 4.7-9.5 7.2-11.1 5.6z"/></>,
+    building:<><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M9 8h.01M15 8h.01M9 12h.01M15 12h.01M9 16h.01M15 16h.01"/></>,
+    globe:<><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></>,
+    cpu:<><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></>,
+    beaker:<><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/><path d="M7 14h10"/></>,
+    landmark:<><path d="M3 21h18M4 10h16M12 3 4 7h16zM6 10v8M10 10v8M14 10v8M18 10v8"/></>,
+    chart:<><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></>,
+    bookmark:<path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/>,
+    settings:<><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 6.6 19.4l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0-1.17-2.82H2a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 6.6l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 10 4.6V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 21 10h.01a2 2 0 0 1 0 4H21a1.65 1.65 0 0 0-1.6 1z"/></>,
+    search:<><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></>,
+    bell:<><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></>,
+    menu:<><path d="M3 12h18M3 6h18M3 18h18"/></>,
+    x:<><path d="M18 6 6 18M6 6l12 12"/></>,
+    ext:<><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></>,
+    filter:<path d="M22 3H2l8 9.5V19l4 2v-8.5z"/>,
+    pin:<><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></>,
+    trend:<><path d="M3 17 9 11l4 4 8-8"/><path d="M17 7h4v4"/></>,
+    arrow:<><path d="M5 12h14M13 6l6 6-6 6"/></>,
+    calendar:<><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></>,
+    flag:<><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V4s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22V4"/></>,
+    coins:<><circle cx="8" cy="8" r="5"/><path d="M18.1 6.3a5 5 0 0 1 0 9.4M13 12a5 5 0 0 1-9.4 2.7"/></>,
+    check:<path d="M20 6 9 17l-5-5"/>,
+    layers:<><path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5M3 17l9 5 9-5"/></>,
+    zap:<path d="M13 2 3 14h7l-1 8 10-12h-7z"/>,
+    recycle:<><path d="M7 19H4.8a2 2 0 0 1-1.7-3l1-1.7M7.5 4.2 8.6 2.4a2 2 0 0 1 3.4 0l1.2 2M14 21h5.2a2 2 0 0 0 1.7-3l-.9-1.5M11 21l2-3.5-4-1M13 3l1.9 3.3 3.6-1.3M6.6 9.6 4.7 13l3.6 1.4"/></>,
+    inbox:<><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1z"/></>,
+    briefcase:<><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>,
+    shield:<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>,
+  };
+  return <svg {...p}>{P[n]||null}</svg>;
+}
+
+/* ============================================================
+   SMALL HELPERS
+   ============================================================ */
+const fmtDate = iso => new Date(iso+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+const monthName = m => ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m-1];
+const OPP_STYLE = {
+  "Mine Opening":{c:"--s2",i:"pin"},"Processing Expansion":{c:"--s1",i:"layers"},
+  "Magnet Plant":{c:"--s5",i:"zap"},"Government Funding":{c:"--s3",i:"landmark"},
+  "Export Restriction":{c:"--s6",i:"shield"},"Recycling Investment":{c:"--s2",i:"recycle"},
+  "Technology Breakthrough":{c:"--s1",i:"cpu"},"Strategic Partnership":{c:"--s5",i:"briefcase"},
+  "Supply Chain Diversification":{c:"--s8",i:"globe"}
+};
+function elColorFor(sym){const e=ELEMENTS.find(x=>x.sym===sym);return e?ELEMENT_COLOR(e):"#3987e5";}
+
+function useCount(list,key){
+  return useMemo(()=>{
+    const m={};list.forEach(a=>{
+      const v=Array.isArray(a[key])?a[key]:[a[key]];
+      v.forEach(x=>{if(x)m[x]=(m[x]||0)+1});
+    });return m;
+  },[list,key]);
+}
+
+/* ============================================================
+   COMPONENTS
+   ============================================================ */
+function Sidebar({page,setPage,collapsed,counts,bookmarks}){
+  const groups=[
+    {label:"Overview",items:[["dashboard","Dashboard","dashboard"],["news","Latest News","news",counts.total]]},
+    {label:"Explore",items:[["products","Product Explorer","atom"],["companies","Companies","building"],
+      ["countries","Countries","globe"],["technologies","Technologies","cpu"]]},
+    {label:"Intelligence",items:[["research","Research","beaker",counts.research],["policies","Government Policies","landmark",counts.policy],
+      ["opportunities","Market Opportunities","zap"],["analytics","Analytics","chart"]]},
+    {label:"Workspace",items:[["bookmarks","Bookmarks","bookmark",bookmarks.size||null],["settings","Settings","settings"]]},
+  ];
+  return (
+    <aside className={"sidebar"+(collapsed?" collapsed":"")}>
+      <div className="sb-brand">
+        <div className="sb-logo"><Icon n="atom" s={19}/></div>
+        <div className="sb-brand-txt"><b>REE Intel</b><span>Terminal</span></div>
+      </div>
+      <nav className="sb-nav">
+        {groups.map(g=>(
+          <div key={g.label}>
+            <div className="sb-section">{g.label}</div>
+            {g.items.map(([id,label,ico,badge])=>(
+              <button key={id} className={"nav-item"+(page===id?" active":"")} onClick={()=>setPage(id)} title={label}>
+                <Icon n={ico}/><span className="nav-item-txt">{label}</span>
+                {badge?<span className="nav-badge">{badge}</span>:null}
+              </button>
+            ))}
+          </div>
+        ))}
+      </nav>
+      <div className="sb-foot">
+        <button className="nav-item" onClick={()=>setPage("settings")} title="Account">
+          <div className="hd-avatar" style={{width:26,height:26,fontSize:11}}>JR</div>
+          <span className="nav-item-txt" style={{fontSize:12.5}}>Jeeten R.</span>
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+function Header({toggle,search,setSearch,mode,todayStr}){
+  return (
+    <header className="header">
+      <button className="hd-toggle" onClick={toggle}><Icon n="menu"/></button>
+      <div className="hd-title">
+        <b>Rare Earth Elements Intelligence</b>
+        <span>Global Rare Earth Elements Market Intelligence</span>
+      </div>
+      <div className="hd-search">
+        <Icon n="search" s={16}/>
+        <input value={search} onChange={e=>setSearch(e.target.value)}
+          placeholder="Search news, companies, elements, technologies…"/>
+      </div>
+      <div className="hd-date"><Icon n="calendar"/>{todayStr}</div>
+      <button className="hd-icon"><Icon n="bell"/><span className="dot"/></button>
+      <button className="hd-icon"><Icon n="settings"/></button>
+      <div className="hd-avatar">JR</div>
+    </header>
+  );
+}
+
+function KpiCard({icon,val,label,color,trend}){
+  return (
+    <div className="kpi" style={{"--kc":color,"--kcs":color+"22"}}>
+      <div className="kpi-top">
+        <div className="kpi-ico"><Icon n={icon} s={19}/></div>
+        {trend?<div className="kpi-trend"><Icon n="trend" s={12}/>{trend}</div>:null}
+      </div>
+      <div className="kpi-val">{val}</div>
+      <div className="kpi-label">{label}</div>
+    </div>
+  );
+}
+
+function NewsCard({a,onOpen,bookmarked,toggleBookmark}){
+  return (
+    <div className="news-card fade-in" onClick={()=>onOpen(a)}>
+      <div className="news-thumb" style={{background:`linear-gradient(135deg,${a.color}bb,${a.color}22),radial-gradient(circle at 80% 20%, ${a.color}55, transparent 60%)`,backgroundColor:"#141413"}}>
+        <button className={"bookmark"+(bookmarked?" on":"")} onClick={e=>{e.stopPropagation();toggleBookmark(a.id);}}>
+          <Icon n="bookmark" s={15}/>
+        </button>
+        {a.ree.length?<span className="ree-chip">{a.ree.slice(0,3).join(" · ")}</span>:null}
+        <span className="cat-tag">{a.category}</span>
+      </div>
+      <div className="news-body">
+        <div className="news-meta">
+          <span className="mp"><Icon n="calendar" s={12}/>{fmtDate(a.date)}</span>
+          <span className="mp"><Icon n="pin" s={12}/>{a.country}</span>
+          <span className="mp"><Icon n="globe" s={12}/>{a.continent}</span>
+        </div>
+        <h3 className="news-headline">{a.title}</h3>
+        <p className="news-summary">{a.summary}</p>
+        <div className="chip-row" style={{marginBottom:12}}>
+          {a.company?<span className="chip co">{a.company}</span>:null}
+          {a.technology?<span className="chip">{a.technology}</span>:null}
+          {a.industry?<span className="chip">{a.industry}</span>:null}
+        </div>
+        <div className="news-foot">
+          <span className="src-tag">{a.source}</span>
+          <span className="read-more">Read More<Icon n="arrow" s={14}/></span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NewsDrawer({a,onClose,bookmarked,toggleBookmark}){
+  useEffect(()=>{
+    const h=e=>{if(e.key==="Escape")onClose();};
+    window.addEventListener("keydown",h);return ()=>window.removeEventListener("keydown",h);
+  },[]);
+  if(!a) return null;
+  const cells=[["Publication Date",fmtDate(a.date)],["Country",a.country],["Continent",a.continent],
+    ["Category",a.category],["Company",a.company||"—"],["Technology",a.technology||"—"],
+    ["End-use Industry",a.industry||"—"],["Source",a.source]];
+  return (
+    <>
+      <div className="drawer-overlay" onClick={onClose}/>
+      <div className="drawer">
+        <div className="drawer-hero" style={{background:`linear-gradient(160deg,${a.color}cc,#141413 70%),radial-gradient(circle at 75% 25%,${a.color}66,transparent 55%)`,backgroundColor:"#141413"}}>
+          <button className="drawer-close" onClick={onClose}><Icon n="x" s={18}/></button>
+          <span className="dh-cat">{a.category}</span>
+        </div>
+        <div className="drawer-body">
+          <h2>{a.title}</h2>
+          {a.ree.length?<div className="drawer-ree-tags">
+            {a.ree.map(r=>{const e=ELEMENTS.find(x=>x.sym===r);return(
+              <span key={r} className="ree-tag" style={{background:elColorFor(r)}}>{r} · {e?e.name:r}</span>);})}
+          </div>:null}
+          <div className="drawer-meta-grid">
+            {cells.map(([k,v])=><div key={k} className="dm-cell"><b>{k}</b><span>{v}</span></div>)}
+          </div>
+          <h4>Complete Summary</h4>
+          <div className="drawer-summary">{a.body.map((p,i)=><p key={i}>{p}</p>)}</div>
+          <div className="drawer-actions">
+            <button className={"btn "+(bookmarked?"btn-primary":"btn-ghost")} onClick={()=>toggleBookmark(a.id)}>
+              <Icon n="bookmark" s={15}/>{bookmarked?"Bookmarked":"Bookmark"}
+            </button>
+            <a className="btn btn-primary" href={a.url} target="_blank" rel="noopener">
+              <Icon n="ext" s={15}/>Open Original Article
+            </a>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function FilterPanel({draft,setDraft,onApply,onReset,options}){
+  const set=(k,v)=>setDraft({...draft,[k]:v});
+  const field=(k,label,opts)=>(
+    <div className="fp-group">
+      <label>{label}</label>
+      <select className="fp-select" value={draft[k]} onChange={e=>set(k,e.target.value)}>
+        <option value="">All</option>
+        {opts.map(o=><option key={o} value={o}>{o}</option>)}
+      </select>
+    </div>
+  );
+  return (
+    <div className="filter-panel">
+      <h3><Icon n="filter" s={15}/>Filters</h3>
+      <p className="fp-sub">Combine any number of filters</p>
+      {field("ree","Rare Earth Element",REE_SYMS.map(s=>{const e=ELEMENTS.find(x=>x.sym===s);return s;}))}
+      {field("year","Year",options.years)}
+      {field("month","Month",options.months.map(m=>monthName(m)))}
+      {field("continent","Continent",options.continents)}
+      {field("country","Country",options.countries)}
+      {field("company","Company",options.companies)}
+      {field("technology","Technology",options.technologies)}
+      {field("category","Category",CATEGORIES)}
+      {field("industry","End-use Industry",options.industries)}
+      {field("source","News Source",options.sources)}
+      <div className="fp-actions">
+        <button className="btn btn-primary" onClick={onApply}><Icon n="check" s={14}/>Apply</button>
+        <button className="btn btn-ghost" onClick={onReset}>Reset</button>
+      </div>
+    </div>
+  );
+}
+
+function EmptyState({onReset}){
+  return (
+    <div className="empty">
+      <Icon n="inbox" s={52}/>
+      <h3>No articles match your filters</h3>
+      <p>Try broadening or clearing your filters to see more results.</p>
+      <button className="btn btn-ghost" style={{maxWidth:160,margin:"0 auto"}} onClick={onReset}>Reset filters</button>
+    </div>
+  );
+}
+function SkeletonGrid(){
+  return <div className="news-grid">{Array.from({length:6}).map((_,i)=><div key={i} className="skel skel-card"/>)}</div>;
+}
+
+/* ---- CHARTS ---- */
+const AXIS={tick:{fill:"#898781",fontSize:11},axisLine:{stroke:"#383835"},tickLine:false};
+function ChartLegend({items}){
+  return <div className="chart-legend">{items.map((it,i)=>(
+    <span key={i} className="lg"><span className="sw" style={{background:it.color}}/>{it.label}</span>))}</div>;
+}
+function BarBlock({title,sub,data,color,horizontal}){
+  const c=color||"var(--s1)";
+  if(horizontal){
+    return (
+      <div className="chart-card">
+        <div className="chart-head"><h3>{title}</h3><span>{sub}</span></div>
+        <ResponsiveContainer width="100%" height={Math.max(200,data.length*34)}>
+          <BarChart data={data} layout="vertical" margin={{left:8,right:24,top:6,bottom:6}}>
+            <CartesianGrid horizontal={false} stroke="#2c2c2a"/>
+            <XAxis type="number" {...AXIS}/>
+            <YAxis type="category" dataKey="name" width={112} {...AXIS}/>
+            <Tooltip cursor={{fill:"rgba(255,255,255,.04)"}}/>
+            <Bar dataKey="value" fill={c} radius={[0,4,4,0]} barSize={16}/>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  }
+  return (
+    <div className="chart-card">
+      <div className="chart-head"><h3>{title}</h3><span>{sub}</span></div>
+      <ResponsiveContainer width="100%" height={250}>
+        <BarChart data={data} margin={{left:-14,right:8,top:6,bottom:6}}>
+          <CartesianGrid vertical={false} stroke="#2c2c2a"/>
+          <XAxis dataKey="name" {...AXIS} interval={0} angle={data.length>7?-30:0} textAnchor={data.length>7?"end":"middle"} height={data.length>7?54:30}/>
+          <YAxis {...AXIS} allowDecimals={false}/>
+          <Tooltip cursor={{fill:"rgba(255,255,255,.04)"}}/>
+          <Bar dataKey="value" fill={c} radius={[4,4,0,0]} barSize={26}/>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+function ColoredBarBlock({title,sub,data}){
+  return (
+    <div className="chart-card">
+      <div className="chart-head"><h3>{title}</h3><span>{sub}</span></div>
+      <ResponsiveContainer width="100%" height={250}>
+        <BarChart data={data} margin={{left:-14,right:8,top:6,bottom:6}}>
+          <CartesianGrid vertical={false} stroke="#2c2c2a"/>
+          <XAxis dataKey="name" {...AXIS} interval={0}/>
+          <YAxis {...AXIS} allowDecimals={false}/>
+          <Tooltip cursor={{fill:"rgba(255,255,255,.04)"}}/>
+          <Bar dataKey="value" radius={[4,4,0,0]} barSize={30}>
+            {data.map((d,i)=><Cell key={i} fill={PALETTE[i%PALETTE.length]}/>)}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+function DonutBlock({title,sub,data}){
+  const items=data.map((d,i)=>({label:d.name,color:PALETTE[i%PALETTE.length],value:d.value}));
+  return (
+    <div className="chart-card">
+      <div className="chart-head"><h3>{title}</h3><span>{sub}</span></div>
+      <ResponsiveContainer width="100%" height={230}>
+        <PieChart>
+          <Pie data={data} dataKey="value" nameKey="name" innerRadius={55} outerRadius={88} paddingAngle={2} stroke="#1a1a19" strokeWidth={2}>
+            {data.map((d,i)=><Cell key={i} fill={PALETTE[i%PALETTE.length]}/>)}
+          </Pie>
+          <Tooltip/>
+        </PieChart>
+      </ResponsiveContainer>
+      <ChartLegend items={items}/>
+    </div>
+  );
+}
+function TrendBlock({title,sub,data,color}){
+  const c=color||"var(--s1)";
+  return (
+    <div className="chart-card full">
+      <div className="chart-head"><h3>{title}</h3><span>{sub}</span></div>
+      <ResponsiveContainer width="100%" height={260}>
+        <AreaChart data={data} margin={{left:-14,right:12,top:8,bottom:6}}>
+          <defs><linearGradient id={"g"+title.replace(/\s/g,"")} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#3987e5" stopOpacity={0.35}/>
+            <stop offset="100%" stopColor="#3987e5" stopOpacity={0}/>
+          </linearGradient></defs>
+          <CartesianGrid vertical={false} stroke="#2c2c2a"/>
+          <XAxis dataKey="name" {...AXIS} interval={0} angle={data.length>8?-30:0} textAnchor={data.length>8?"end":"middle"} height={data.length>8?52:30}/>
+          <YAxis {...AXIS} allowDecimals={false}/>
+          <Tooltip cursor={{stroke:"#383835"}}/>
+          <Area type="monotone" dataKey="value" stroke="#3987e5" strokeWidth={2} fill={"url(#g"+title.replace(/\s/g,"")+")"} dot={{r:3,fill:"#3987e5"}} activeDot={{r:5}}/>
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+/* ============================================================
+   MAIN APP
+   ============================================================ */
+const EMPTY_FILTERS={ree:"",year:"",month:"",continent:"",country:"",company:"",technology:"",category:"",industry:"",source:""};
+
+function App(){
+  const [page,setPage]=useState("dashboard");
+  const [collapsed,setCollapsed]=useState(false);
+  const [search,setSearch]=useState("");
+  const [news,setNews]=useState([]);
+  const [loading,setLoading]=useState(true);
+  const [mode,setMode]=useState("sample");
+  const [filters,setFilters]=useState(EMPTY_FILTERS);
+  const [draft,setDraft]=useState(EMPTY_FILTERS);
+  const [active,setActive]=useState(null);
+  const [bookmarks,setBookmarks]=useState(()=>new Set());
+  const todayStr=new Date().toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"});
+
+  useEffect(()=>{
+    let alive=true;
+    (async()=>{
+      let data,m;
+      try{ data=await fetchLiveNews(); m="live"; }
+      catch(e){ data=NEWS; m="sample"; }
+      // small artificial delay so skeletons are visible on fast loads
+      await new Promise(r=>setTimeout(r,650));
+      if(!alive)return;
+      setNews(normalize(data));setMode(m);setLoading(false);
+    })();
+    return ()=>{alive=false;};
+  },[]);
+
+  const toggleBookmark=id=>setBookmarks(prev=>{const n=new Set(prev);n.has(id)?n.delete(id):n.add(id);return n;});
+
+  const options=useMemo(()=>{
+    const years=[...new Set(news.map(a=>a.date.slice(0,4)))].sort().reverse();
+    const months=[...new Set(news.map(a=>+a.date.slice(5,7)))].sort((a,b)=>a-b);
+    return {
+      years, months,
+      continents:[...new Set(news.map(a=>a.continent))].sort(),
+      countries:[...new Set(news.map(a=>a.country))].sort(),
+      companies:[...new Set(news.map(a=>a.company).filter(Boolean))].sort(),
+      technologies:[...new Set(news.map(a=>a.technology).filter(Boolean))].sort(),
+      industries:[...new Set(news.map(a=>a.industry).filter(Boolean))].sort(),
+      sources:[...new Set(news.map(a=>a.source))].sort(),
+    };
+  },[news]);
+
+  const filtered=useMemo(()=>{
+    const q=search.trim().toLowerCase();
+    return news.filter(a=>{
+      if(filters.ree && !a.ree.includes(filters.ree)) return false;
+      if(filters.year && a.date.slice(0,4)!==filters.year) return false;
+      if(filters.month && monthName(+a.date.slice(5,7))!==filters.month) return false;
+      if(filters.continent && a.continent!==filters.continent) return false;
+      if(filters.country && a.country!==filters.country) return false;
+      if(filters.company && a.company!==filters.company) return false;
+      if(filters.technology && a.technology!==filters.technology) return false;
+      if(filters.category && a.category!==filters.category) return false;
+      if(filters.industry && a.industry!==filters.industry) return false;
+      if(filters.source && a.source!==filters.source) return false;
+      if(q){
+        const hay=(a.title+" "+a.summary+" "+a.company+" "+a.technology+" "+a.country+" "+a.category+" "+a.ree.join(" ")).toLowerCase();
+        if(!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  },[news,filters,search]);
+
+  const applyDraft=()=>setFilters(draft);
+  const resetAll=()=>{setDraft(EMPTY_FILTERS);setFilters(EMPTY_FILTERS);};
+  const activeChips=Object.entries(filters).filter(([k,v])=>v);
+  const removeFilter=k=>{const nf={...filters,[k]:""};setFilters(nf);setDraft(nf);};
+
+  // navigate + set a filter from cards
+  const drillTo=(k,v)=>{const nf={...EMPTY_FILTERS,[k]:v};setFilters(nf);setDraft(nf);setPage("news");};
+
+  const modeBadge=(
+    <span className={"badge-live "+(mode==="live"?"live":"sample")}>
+      <span className="pulse"/>{mode==="live"?"Live News":"Sample Data"}
+    </span>
+  );
+
+  return (
+    <div className="app">
+      <Sidebar page={page} setPage={setPage} collapsed={collapsed}
+        counts={{total:news.length,research:news.filter(a=>a.category==="Research").length,
+        policy:news.filter(a=>a.category==="Government Policy").length}} bookmarks={bookmarks}/>
+      <div className="main">
+        <Header toggle={()=>setCollapsed(c=>!c)} search={search} setSearch={setSearch} mode={mode} todayStr={todayStr}/>
+        <div className="content">
+          {page==="dashboard" && <DashboardPage news={news} filtered={news} loading={loading} modeBadge={modeBadge}
+            onOpen={setActive} bookmarks={bookmarks} toggleBookmark={toggleBookmark} setPage={setPage} drillTo={drillTo}/>}
+          {page==="news" && <NewsPage filtered={filtered} loading={loading} modeBadge={modeBadge}
+            draft={draft} setDraft={setDraft} onApply={applyDraft} onReset={resetAll} options={options}
+            activeChips={activeChips} removeFilter={removeFilter} onOpen={setActive}
+            bookmarks={bookmarks} toggleBookmark={toggleBookmark}/>}
+          {page==="products" && <ProductsPage news={news} drillTo={drillTo}/>}
+          {page==="companies" && <CompaniesPage news={news} drillTo={drillTo}/>}
+          {page==="countries" && <CountriesPage news={news} drillTo={drillTo}/>}
+          {page==="technologies" && <TechPage news={news} drillTo={drillTo}/>}
+          {page==="research" && <ResearchPage news={news} onOpen={setActive}/>}
+          {page==="policies" && <PolicyPage news={news} onOpen={setActive}/>}
+          {page==="opportunities" && <OpportunitiesPage news={news} onOpen={setActive}/>}
+          {page==="analytics" && <AnalyticsPage news={news}/>}
+          {page==="bookmarks" && <BookmarksPage news={news} bookmarks={bookmarks} onOpen={setActive}
+            toggleBookmark={toggleBookmark} setPage={setPage}/>}
+          {page==="settings" && <SettingsPage mode={mode} modeBadge={modeBadge}/>}
+        </div>
+      </div>
+      {active && <NewsDrawer a={active} onClose={()=>setActive(null)}
+        bookmarked={bookmarks.has(active.id)} toggleBookmark={toggleBookmark}/>}
+    </div>
+  );
+}
+
+/* ---------- PAGES ---------- */
+function PageHead({title,sub,right}){
+  return (
+    <div className="page-head" style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between",gap:16,flexWrap:"wrap"}}>
+      <div><h1>{title}</h1><p>{sub}</p></div>
+      <div style={{display:"flex",alignItems:"center",gap:12}}>{right}</div>
+    </div>
+  );
+}
+
+function DashboardPage({news,loading,modeBadge,onOpen,bookmarks,toggleBookmark,setPage,drillTo}){
+  const countries=new Set(news.map(a=>a.country)).size;
+  const companies=new Set(news.map(a=>a.company).filter(Boolean)).size;
+  const techs=new Set(news.map(a=>a.technology).filter(Boolean)).size;
+  const gov=news.filter(a=>a.category==="Government Policy").length;
+  const research=news.filter(a=>a.category==="Research").length;
+  const invest=news.filter(a=>a.category==="Investment"||a.category==="Mergers & Acquisitions").length;
+  const kpis=[
+    {icon:"news",val:news.length,label:"Total Articles",color:"var(--s1)",trend:"+12%"},
+    {icon:"globe",val:countries,label:"Countries Covered",color:"var(--s2)",trend:"+3"},
+    {icon:"building",val:companies,label:"Companies Mentioned",color:"var(--s3)",trend:"+5"},
+    {icon:"landmark",val:gov,label:"Government Announcements",color:"var(--s5)",trend:"+4"},
+    {icon:"beaker",val:research,label:"Research Publications",color:"var(--s6)",trend:"+2"},
+    {icon:"coins",val:invest,label:"Investment Announcements",color:"var(--s8)",trend:"+6"},
+    {icon:"cpu",val:techs,label:"Technologies Tracked",color:"var(--s7)",trend:"+1"},
+  ];
+  const latest=news.slice(0,6);
+  const topOpps=news.filter(a=>a.opportunity).slice(0,3);
+  return (
+    <div className="fade-in">
+      <PageHead title="Executive Dashboard"
+        sub="A real-time overview of the global rare earth elements landscape" right={modeBadge}/>
+      {loading?<div className="kpi-grid">{Array.from({length:7}).map((_,i)=><div key={i} className="skel" style={{height:110,borderRadius:14}}/>)}</div>:
+        <div className="kpi-grid">{kpis.map(k=><KpiCard key={k.label} {...k}/>)}</div>}
+      <div className="two-col">
+        <div>
+          <div className="section-title"><h2>Latest Headlines</h2>
+            <button className="link-btn" onClick={()=>setPage("news")}>View all<Icon n="arrow" s={14}/></button></div>
+          {loading?<SkeletonGrid/>:
+            <div className="news-grid" style={{gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))"}}>
+              {latest.map(a=><NewsCard key={a.id} a={a} onOpen={onOpen} bookmarked={bookmarks.has(a.id)} toggleBookmark={toggleBookmark}/>)}
+            </div>}
+        </div>
+        <div>
+          <div className="section-title"><h2>Top Opportunities</h2>
+            <button className="link-btn" onClick={()=>setPage("opportunities")}>All<Icon n="arrow" s={14}/></button></div>
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
+            {loading?Array.from({length:3}).map((_,i)=><div key={i} className="skel" style={{height:150,borderRadius:14}}/>):
+              topOpps.map(a=><OppCard key={a.id} a={a} onOpen={onOpen}/>)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NewsPage({filtered,loading,modeBadge,draft,setDraft,onApply,onReset,options,activeChips,removeFilter,onOpen,bookmarks,toggleBookmark}){
+  return (
+    <div className="fade-in">
+      <PageHead title="Latest News"
+        sub={`${filtered.length} intelligence articles across the global REE value chain`} right={modeBadge}/>
+      <div className="layout-with-filters">
+        <FilterPanel draft={draft} setDraft={setDraft} onApply={onApply} onReset={onReset} options={options}/>
+        <div>
+          {activeChips.length?<div className="active-filter-row">
+            {activeChips.map(([k,v])=>(
+              <span key={k} className="af-chip">{v}
+                <button onClick={()=>removeFilter(k)}><Icon n="x" s={13}/></button></span>
+            ))}
+            <button className="af-chip" style={{background:"var(--surface-3)",color:"var(--ink-2)"}} onClick={onReset}>Clear all</button>
+          </div>:null}
+          {loading?<SkeletonGrid/>:
+            filtered.length? <div className="news-grid">
+              {filtered.map(a=><NewsCard key={a.id} a={a} onOpen={onOpen} bookmarked={bookmarks.has(a.id)} toggleBookmark={toggleBookmark}/>)}
+            </div> : <EmptyState onReset={onReset}/>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductsPage({news,drillTo}){
+  const counts=useCount(news,"ree");
+  return (
+    <div className="fade-in">
+      <PageHead title="Product Explorer" sub="All 17 rare earth elements — click any element to filter the intelligence feed"/>
+      <div className="tile-grid">
+        {ELEMENTS.map(e=>{
+          const col=ELEMENT_COLOR(e);
+          const cat=e.num>=64||e.sym==="Y"?"Heavy REE":"Light REE";
+          return (
+            <div key={e.sym} className="el-card" onClick={()=>drillTo("ree",e.sym)}>
+              <div className="el-top">
+                <div className="el-sym" style={{background:`linear-gradient(135deg,${col},${col}99)`}}>
+                  <span>{e.num}</span><b>{e.sym}</b>
+                </div>
+                <span className="el-num">#{e.num}</span>
+              </div>
+              <h3 className="el-name">{e.name}</h3>
+              <div className="el-cat-lbl">{cat}</div>
+              <p className="el-desc">{e.desc}</p>
+              <div className="el-kv"><b>Major Applications</b><span>{e.apps}</span></div>
+              <div className="el-kv"><b>Producing Countries</b><span>{e.countries}</span></div>
+              <div className="el-foot">
+                <span>{counts[e.sym]||0} related articles</span>
+                <span className="read-more">Filter<Icon n="arrow" s={13}/></span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function CompaniesPage({news,drillTo}){
+  const counts=useCount(news,"company");
+  return (
+    <div className="fade-in">
+      <PageHead title="Company Explorer" sub="Leading producers and developers across the global rare earth supply chain"/>
+      <div className="tile-grid" style={{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>
+        {COMPANIES.map(c=>(
+          <div key={c.name} className="co-card" onClick={()=>drillTo("company",c.name)}>
+            <div className="co-head">
+              <div className="co-logo" style={{background:`linear-gradient(135deg,${c.color},${c.color}99)`}}>{c.abbr}</div>
+              <div>
+                <h3 className="co-name">{c.name}</h3>
+                <div className="co-hq"><Icon n="pin" s={12}/>{c.hq} · {CONTINENT[c.hq]||""}</div>
+              </div>
+            </div>
+            <p className="co-focus">{c.focus}</p>
+            <div className="el-kv" style={{marginBottom:0}}><b>Major Products</b><span>{c.products}</span></div>
+            <div className="co-foot">
+              <span className="co-count"><Icon n="news" s={14}/><b>{counts[c.name]||0}</b> articles</span>
+              <span className="read-more">View news<Icon n="arrow" s={13}/></span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CountriesPage({news,drillTo}){
+  const counts=useCount(news,"country");
+  const W=960,H=500;
+  const proj=(lat,lon)=>[(lon+180)/360*W,(90-lat)/180*H];
+  const max=Math.max(1,...COUNTRIES.map(c=>counts[c.name]||0));
+  const graticule=[];
+  for(let lon=-180;lon<=180;lon+=30){const[x]=proj(0,lon);graticule.push(<line key={"v"+lon} x1={x} y1={0} x2={x} y2={H} stroke="#232322"/>);}
+  for(let lat=-60;lat<=80;lat+=30){const[,y]=proj(lat,0);graticule.push(<line key={"h"+lat} x1={0} y1={y} x2={W} y2={y} stroke="#232322"/>);}
+  return (
+    <div className="fade-in">
+      <PageHead title="Country Explorer" sub="Global distribution of rare earth activity — click a country to filter the feed"/>
+      <div className="map-wrap">
+        <svg className="map-svg" viewBox={`0 0 ${W} ${H}`}>
+          <rect x={0} y={0} width={W} height={H} fill="#141413" rx={10}/>
+          {graticule}
+          {COUNTRIES.map(c=>{
+            const[x,y]=proj(c.lat,c.lon);const n=counts[c.name]||0;
+            const r=8+Math.sqrt(n/max)*26;
+            return (
+              <g key={c.name} className="map-node" onClick={()=>drillTo("country",c.name)}>
+                <circle cx={x} cy={y} r={r} fill="#3987e5" fillOpacity={0.18} stroke="#3987e5" strokeOpacity={0.5}/>
+                <circle cx={x} cy={y} r={5} fill="#3987e5"/>
+                <text x={x+(c.ldx||0)} y={y-r-6+(c.ldy||0)} textAnchor={c.anc||"middle"} fontSize={12} fill="#d7d6cd" fontWeight="600"
+                  stroke="#141413" strokeWidth={3} paintOrder="stroke" strokeLinejoin="round">{c.name}</text>
+                <text x={x} y={y+4} textAnchor="middle" fontSize={10} fill="#fff" fontWeight="700">{n}</text>
+              </g>
+            );
+          })}
+        </svg>
+        <div className="map-legend"><b>Article volume</b>
+          <div className="lg-row"><span className="dot" style={{width:8,height:8}}/>Low</div>
+          <div className="lg-row"><span className="dot" style={{width:14,height:14}}/>Medium</div>
+          <div className="lg-row"><span className="dot" style={{width:20,height:20}}/>High</div>
+        </div>
+      </div>
+      <div className="country-list">
+        {COUNTRIES.slice().sort((a,b)=>(counts[b.name]||0)-(counts[a.name]||0)).map(c=>(
+          <div key={c.name} className="country-row" onClick={()=>drillTo("country",c.name)}>
+            <div className="country-flag">{FLAG[c.name]}</div>
+            <div><div className="cr-name">{c.name}</div><div className="cr-sub">{CONTINENT[c.name]}</div></div>
+            <div className="cr-count">{counts[c.name]||0}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TechPage({news,drillTo}){
+  const counts=useCount(news,"technology");
+  return (
+    <div className="fade-in">
+      <PageHead title="Technology Explorer" sub="Processing, separation and recycling technologies shaping the industry"/>
+      <div className="tile-grid" style={{gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))"}}>
+        {TECHNOLOGIES.map((t,i)=>{
+          const col=PALETTE[i%PALETTE.length];
+          return (
+            <div key={t.name} className="el-card" onClick={()=>drillTo("technology",t.name)}>
+              <div className="el-top">
+                <div className="kpi-ico" style={{background:col+"22",color:col,width:44,height:44}}><Icon n="cpu" s={21}/></div>
+                <span className="chip" style={{background:col+"22",color:col}}>{t.stage}</span>
+              </div>
+              <h3 className="el-name">{t.name}</h3>
+              <p className="el-desc" style={{WebkitLineClamp:4}}>{t.desc}</p>
+              <div className="chip-row" style={{marginBottom:10}}>{t.tags.map(tg=><span key={tg} className="chip">{tg}</span>)}</div>
+              <div className="el-foot">
+                <span>{counts[t.name]||0} related articles</span>
+                <span className="read-more">Filter<Icon n="arrow" s={13}/></span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ListRow({a,onOpen,icon,color}){
+  return (
+    <div className="list-row" onClick={()=>onOpen(a)}>
+      <div className="lr-ico" style={{background:color+"22",color}}><Icon n={icon} s={20}/></div>
+      <div className="lr-main">
+        <h4>{a.title}</h4>
+        <p>{a.summary}</p>
+        <div className="lr-meta">
+          <span><Icon n="calendar" s={12}/>{fmtDate(a.date)}</span>
+          <span><Icon n="pin" s={12}/>{a.country}</span>
+          {a.company?<span><Icon n="building" s={12}/>{a.company}</span>:null}
+          <span><Icon n="news" s={12}/>{a.source}</span>
+        </div>
+      </div>
+      <span className="read-more">Open<Icon n="arrow" s={14}/></span>
+    </div>
+  );
+}
+function ResearchPage({news,onOpen}){
+  const items=news.filter(a=>a.category==="Research"||a.category==="Technology");
+  return (
+    <div className="fade-in">
+      <PageHead title="Research & Innovation" sub="Breakthroughs in separation, recycling and rare earth materials science"/>
+      {items.length?<div className="list-rows">{items.map(a=><ListRow key={a.id} a={a} onOpen={onOpen} icon="beaker" color="var(--s6)"/>)}</div>
+        :<div className="empty"><Icon n="beaker" s={52}/><h3>No research items</h3></div>}
+    </div>
+  );
+}
+function PolicyPage({news,onOpen}){
+  const items=news.filter(a=>a.category==="Government Policy");
+  return (
+    <div className="fade-in">
+      <PageHead title="Government Policies" sub="Export controls, funding programmes and strategic frameworks worldwide"/>
+      {items.length?<div className="list-rows">{items.map(a=><ListRow key={a.id} a={a} onOpen={onOpen} icon="landmark" color="var(--s5)"/>)}</div>
+        :<div className="empty"><Icon n="landmark" s={52}/><h3>No policy items</h3></div>}
+    </div>
+  );
+}
+
+function OppCard({a,onOpen}){
+  const st=OPP_STYLE[a.opportunity]||{c:"--s1",i:"zap"};
+  const col=`var(${st.c})`;
+  return (
+    <div className="opp-card" onClick={()=>onOpen(a)} style={{cursor:"pointer"}}>
+      <span className="opp-tag" style={{background:col+"22",color:col}}><Icon n={st.i} s={13}/>{a.opportunity}</span>
+      <h3>{a.title}</h3>
+      <p>{a.summary}</p>
+      <div className="opp-foot">
+        <span className="loc"><Icon n="pin" s={13}/>{a.country} · {a.continent}</span>
+        <span>{fmtDate(a.date)}</span>
+      </div>
+    </div>
+  );
+}
+function OpportunitiesPage({news,onOpen}){
+  const opps=news.filter(a=>a.opportunity);
+  const types=[...new Set(opps.map(o=>o.opportunity))];
+  const [f,setF]=useState("");
+  const shown=f?opps.filter(o=>o.opportunity===f):opps;
+  return (
+    <div className="fade-in">
+      <PageHead title="Market Opportunities"
+        sub="Executive intelligence — noteworthy developments surfaced automatically from the feed"/>
+      <div className="active-filter-row">
+        <button className={"af-chip"+(f===""?"":"")} style={{background:f===""?"var(--accent-soft)":"var(--surface-3)",color:f===""?"#8fbcf3":"var(--ink-2)"}} onClick={()=>setF("")}>All ({opps.length})</button>
+        {types.map(t=>(
+          <button key={t} className="af-chip" style={{background:f===t?"var(--accent-soft)":"var(--surface-3)",color:f===t?"#8fbcf3":"var(--ink-2)"}} onClick={()=>setF(t)}>{t}</button>
+        ))}
+      </div>
+      <div className="opp-grid">{shown.map(a=><OppCard key={a.id} a={a} onOpen={onOpen}/>)}</div>
+    </div>
+  );
+}
+
+function AnalyticsPage({news}){
+  const toArr=(obj,limit)=>Object.entries(obj).map(([name,value])=>({name,value})).sort((a,b)=>b.value-a.value).slice(0,limit||99);
+  const byCountry=toArr(useCount(news,"country"),10);
+  const byContinent=toArr(useCount(news,"continent"));
+  const byREE=toArr(useCount(news,"ree"),10);
+  const byCat=toArr(useCount(news,"category"),8);
+  const byCompany=toArr(useCount(news,"company"),8);
+  const byTech=toArr(useCount(news,"technology"),8);
+  const byInd=toArr(useCount(news,"industry"),8);
+
+  const monthly=useMemo(()=>{
+    const m={};news.forEach(a=>{const k=a.date.slice(0,7);m[k]=(m[k]||0)+1;});
+    return Object.keys(m).sort().map(k=>{const[y,mo]=k.split("-");return{name:monthName(+mo)+" '"+y.slice(2),value:m[k]};});
+  },[news]);
+  const yearly=useMemo(()=>{
+    const m={};news.forEach(a=>{const k=a.date.slice(0,4);m[k]=(m[k]||0)+1;});
+    return Object.keys(m).sort().map(k=>({name:k,value:m[k]}));
+  },[news]);
+
+  return (
+    <div className="fade-in">
+      <PageHead title="Analytics" sub="Quantitative intelligence across the global rare earth news landscape"/>
+      <div className="chart-grid">
+        <TrendBlock title="Monthly News Trend" sub="Articles per month" data={monthly}/>
+        <ColoredBarBlock title="News by Continent" sub="Coverage by region" data={byContinent}/>
+        <DonutBlock title="News by Category" sub="Top themes" data={byCat}/>
+        <BarBlock title="Most Active Countries" sub="Top 10 by article volume" data={byCountry} horizontal/>
+        <BarBlock title="Most Mentioned REEs" sub="Top 10 elements" data={byREE} color="var(--s2)" horizontal/>
+        <BarBlock title="Top Companies Mentioned" sub="By coverage" data={byCompany} color="var(--s5)" horizontal/>
+        <BarBlock title="Top Technologies" sub="By coverage" data={byTech} color="var(--s3)" horizontal/>
+        <BarBlock title="Most Active Industries" sub="End-use sectors" data={byInd} color="var(--s8)" horizontal/>
+        <BarBlock title="Yearly News Trend" sub="Articles per year" data={yearly} color="var(--s1)"/>
+      </div>
+    </div>
+  );
+}
+
+function BookmarksPage({news,bookmarks,onOpen,toggleBookmark,setPage}){
+  const saved=news.filter(a=>bookmarks.has(a.id));
+  return (
+    <div className="fade-in">
+      <PageHead title="Bookmarks" sub={`${saved.length} saved article${saved.length===1?"":"s"} for later review`}/>
+      {saved.length? <div className="news-grid">
+        {saved.map(a=><NewsCard key={a.id} a={a} onOpen={onOpen} bookmarked={true} toggleBookmark={toggleBookmark}/>)}
+      </div> : <div className="empty">
+        <Icon n="bookmark" s={52}/><h3>No bookmarks yet</h3>
+        <p>Save articles from the feed to build your personal watchlist.</p>
+        <button className="btn btn-primary" style={{maxWidth:180,margin:"0 auto"}} onClick={()=>setPage("news")}>Browse news</button>
+      </div>}
+    </div>
+  );
+}
+
+function SettingsPage({mode,modeBadge}){
+  const [t,setT]=useState({live:true,notif:true,digest:false,compact:false});
+  const rows=[
+    ["live","Prefer live news","Attempt to fetch the latest public REE news on load, falling back to the bundled dataset"],
+    ["notif","Enable notifications","Show alerts for high-impact market developments"],
+    ["digest","Weekly executive digest","Summarise the week's intelligence into a briefing"],
+    ["compact","Compact density","Reduce spacing for information-dense viewing"],
+  ];
+  return (
+    <div className="fade-in">
+      <PageHead title="Settings" sub="Configure your intelligence terminal" right={modeBadge}/>
+      <div className="card settings-card" style={{padding:"6px 22px"}}>
+        {rows.map(([k,title,desc])=>(
+          <div key={k} className="set-row">
+            <div className="sr-txt"><b>{title}</b><span>{desc}</span></div>
+            <button className={"toggle"+(t[k]?" on":"")} onClick={()=>setT({...t,[k]:!t[k]})}/>
+          </div>
+        ))}
+      </div>
+      <div className="card settings-card" style={{padding:22,marginTop:18}}>
+        <h4 style={{margin:"0 0 12px",fontSize:12,textTransform:"uppercase",letterSpacing:.6,color:"var(--muted)"}}>Data Source</h4>
+        <p style={{fontSize:13,color:"var(--ink-2)",lineHeight:1.6,margin:"0 0 14px"}}>
+          The dashboard first attempts to retrieve live public rare earth news. If browser or CORS
+          restrictions prevent live retrieval inside the artifact, it automatically falls back to a
+          curated bundled dataset — the interface is identical either way. Current status: {modeBadge}
+        </p>
+        <p style={{fontSize:12.5,color:"var(--muted)",lineHeight:1.6,margin:0}}>
+          The data layer is isolated behind a single <code style={{color:"#8fbcf3"}}>fetchLiveNews()</code> function,
+          so connecting a production news API in future requires changing only that one function.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
